@@ -1,0 +1,9 @@
+[submodule "libs/LilyGo-Camera-Series"]
+	path = libs/LilyGo-Camera-Series
+	url = https://github.com/Xinyuan-LilyGO/LilyGo-Camera-Series
+[submodule "libs/LilyGo-AMOLED-Series"]
+	path = libs/LilyGo-AMOLED-Series
+	url = https://github.com/Xinyuan-LilyGO/LilyGo-AMOLED-Series
+[submodule "libs/T-QT"]
+	path = libs/T-QT
+	url = https://github.com/Xinyuan-LilyGO/T-QT
