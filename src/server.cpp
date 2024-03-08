@@ -1,4 +1,7 @@
 #include "server.h"
+#include <ESPAsyncWebServer.h>
+#include <AsyncJson.h>
+#include <ArduinoJson.h>
 
 ServerManager::ServerManager(ConfigManager &configManager)
     : server(80), configManager(configManager)
@@ -11,19 +14,24 @@ void ServerManager::begin()
     server.begin();
 }
 
-void ServerManager::handleClient()
-{
-    server.handleClient();
-}
-
 void ServerManager::setupRoutes()
 {
-    server.on("/", HTTP_GET, std::bind(&ServerManager::serveIndex, this));
-    server.on("/config", HTTP_GET, std::bind(&ServerManager::getConfig, this));
-    server.on("/config", HTTP_POST, std::bind(&ServerManager::setConfig, this));
+    server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request) {
+        serveIndex(request);
+    });
+
+    server.on("/config", HTTP_GET, [this](AsyncWebServerRequest *request) {
+        getConfig(request);
+    });
+
+    server.on("/config", HTTP_POST, [this](AsyncWebServerRequest *request) {
+        setConfig(request);
+    }, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+        handleConfigBody(request, data, len, index, total);
+    });
 }
 
-void ServerManager::serveIndex()
+void ServerManager::serveIndex(AsyncWebServerRequest *request)
 {
     String html = R"(
         <!DOCTYPE html>
@@ -143,10 +151,10 @@ void ServerManager::serveIndex()
         </html>
     )";
 
-    server.send(200, "text/html", html);
+    request->send(200, "text/html", html);
 }
 
-void ServerManager::getConfig()
+void ServerManager::getConfig(AsyncWebServerRequest *request)
 {
     DynamicJsonDocument doc(2048); // Adjust size as needed based on your configuration complexity
 
@@ -176,23 +184,22 @@ void ServerManager::getConfig()
 
     String output;
     serializeJson(doc, output);
-    server.send(200, "application/json", output);
+    request->send(200, "application/json", output);
 }
 
-void ServerManager::setConfig()
+void ServerManager::setConfig(AsyncWebServerRequest *request)
 {
-    if (!server.hasArg("plain"))
-    { // Check if body received
-        server.send(400, "text/plain", "Request body not received");
-        return;
-    }
+    request->send(200);
+}
 
+void ServerManager::handleConfigBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+{
     DynamicJsonDocument doc(2048); // Adjust size based on your needs
-    DeserializationError error = deserializeJson(doc, server.arg("plain"));
+    DeserializationError error = deserializeJson(doc, data, len);
 
     if (error)
     {
-        server.send(400, "text/plain", "Failed to parse request body");
+        request->send(400, "text/plain", "Failed to parse request body");
         return;
     }
 
@@ -230,5 +237,5 @@ void ServerManager::setConfig()
     }
 
     configManager.saveConfiguration();
-    server.send(200, "application/json", "{\"message\":\"Configuration updated successfully\"}");
+    request->send(200, "application/json", "{\"message\":\"Configuration updated successfully\"}");
 }

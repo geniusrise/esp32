@@ -1,12 +1,15 @@
 #include "wifi.h"
 #include "util.h"
+#include "config.h"
+#include "server.h"
 
 /**
  * @brief Constructs a new WiFiManager object.
  *
  * Initializes the WiFi stack.
  */
-WiFiManager::WiFiManager()
+WiFiManager::WiFiManager(ConfigManager &configManager, ServerManager &serverManager)
+    : serverManager(serverManager)
 {
     WiFi.mode(WIFI_OFF); // Ensure WiFi is off before setting up new mode
 }
@@ -21,6 +24,9 @@ void WiFiManager::setupAPMode(const char *ssid, const char *password)
 {
     WiFi.mode(WIFI_AP); // Switch to AP mode
     WiFi.softAP(ssid, password);
+
+    // Start the server
+    serverManager.begin();
 }
 
 /**
@@ -71,8 +77,8 @@ void WiFiManager::disconnect()
  */
 void WiFiManager::handleClient()
 {
-    // Handle client requests here. This is typically done when running a web server.
-    // TODO: need to connect this to the web server
+    // No need to handle client requests explicitly
+    // The asynchronous web server will handle the requests automatically
 }
 
 /**

@@ -11,8 +11,9 @@ int SPEAKER = 18;
 int count = 0;
 
 SpeakerManager speakerManager = SpeakerManager(SPEAKER);
-WiFiManager wiFiManager = WiFiManager();
 ConfigManager config = ConfigManager();
+ServerManager server = ServerManager(config);
+WiFiManager wiFiManager = WiFiManager(config, server);
 
 bool IN_CONFIG_MODE = false;
 
@@ -33,7 +34,7 @@ void setup() {
 
 void setup_loop() {
     color_printf("------ ------ ------ ------ ------ ------ ------ ------ ------\n");
-    color_printf("Main: Start setup loop\n");
+    color_printf("Main: Setup loop, wifi ssid: geniusrise, password: hellogenius\n");
     color_printf("------ ------ ------ ------ ------ ------ ------ ------ ------\n");
 }
 
