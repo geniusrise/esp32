@@ -25,15 +25,125 @@ void ServerManager::setupRoutes()
 
 void ServerManager::serveIndex()
 {
-    String contentType, content;
-    if (loadFromSPIFFS("/index.html", contentType, content))
-    {
-        server.send(200, contentType, content);
-    }
-    else
-    {
-        server.send(404, "text/plain", "File Not Found");
-    }
+    String html = R"(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>ESP32 Configuration</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                }
+                h1 {
+                    text-align: center;
+                }
+                form {
+                    max-width: 500px;
+                    margin: 0 auto;
+                }
+                label {
+                    display: block;
+                    margin-top: 10px;
+                }
+                input[type="text"],
+                input[type="password"] {
+                    width: 100%;
+                    padding: 5px;
+                    margin-top: 5px;
+                }
+                input[type="submit"] {
+                    display: block;
+                    width: 100%;
+                    padding: 10px;
+                    margin-top: 20px;
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>ESP32 Configuration</h1>
+            <form>
+                <label for="wifi-ssid">WiFi SSID:</label>
+                <input type="text" id="wifi-ssid" name="wifi-ssid" required>
+
+                <label for="wifi-password">WiFi Password:</label>
+                <input type="password" id="wifi-password" name="wifi-password" required>
+
+                <label for="bt-device-name">Bluetooth Device Name:</label>
+                <input type="text" id="bt-device-name" name="bt-device-name" required>
+
+                <label for="bt-device-passkey">Bluetooth Device Passkey:</label>
+                <input type="text" id="bt-device-passkey" name="bt-device-passkey" required>
+
+                <label for="llm-host">LLM Host:</label>
+                <input type="text" id="llm-host" name="llm-host" required>
+
+                <label for="llm-port">LLM Port:</label>
+                <input type="text" id="llm-port" name="llm-port" required>
+
+                <label for="llm-type">LLM Type:</label>
+                <input type="text" id="llm-type" name="llm-type" required>
+
+                <label for="llm-endpoints">LLM Endpoints:</label>
+                <input type="text" id="llm-endpoints" name="llm-endpoints" required>
+
+                <label for="user-name">User Name:</label>
+                <input type="text" id="user-name" name="user-name" required>
+
+                <label for="user-demographics">User Demographics:</label>
+                <input type="text" id="user-demographics" name="user-demographics" required>
+
+                <label for="user-username">User Username:</label>
+                <input type="text" id="user-username" name="user-username" required>
+
+                <label for="user-password">User Password:</label>
+                <input type="password" id="user-password" name="user-password" required>
+
+                <label for="system-command">System Command:</label>
+                <input type="text" id="system-command" name="system-command">
+
+                <input type="submit" value="Save Configuration">
+            </form>
+
+            <script>
+                // JavaScript code to handle form submission and configuration update
+                const form = document.querySelector('form');
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    const formData = new FormData(form);
+                    const config = Object.fromEntries(formData.entries());
+
+                    try {
+                        const response = await fetch('/config', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(config)
+                        });
+
+                        if (response.ok) {
+                            alert('Configuration updated successfully!');
+                        } else {
+                            alert('Failed to update configuration.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating the configuration.');
+                    }
+                });
+            </script>
+        </body>
+        </html>
+    )";
+
+    server.send(200, "text/html", html);
 }
 
 void ServerManager::getConfig()
@@ -121,24 +231,4 @@ void ServerManager::setConfig()
 
     configManager.saveConfiguration();
     server.send(200, "application/json", "{\"message\":\"Configuration updated successfully\"}");
-}
-
-String ServerManager::getContentType(const String &filename)
-{
-    // Simplified content type determination
-    if (filename.endsWith(".html"))
-        return "text/html";
-    else if (filename.endsWith(".css"))
-        return "text/css";
-    else if (filename.endsWith(".js"))
-        return "application/javascript";
-    else
-        return "text/plain";
-}
-
-bool ServerManager::loadFromSPIFFS(String path, String &contentType, String &content)
-{
-    // Implement file loading from SPIFFS/LittleFS
-    // Placeholder implementation
-    return false;
 }

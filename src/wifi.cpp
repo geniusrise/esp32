@@ -1,4 +1,5 @@
 #include "wifi.h"
+#include "util.h"
 
 /**
  * @brief Constructs a new WiFiManager object.
@@ -88,12 +89,14 @@ bool WiFiManager::connectToNetwork(const char *ssid, const char *password)
 
     // Attempt to connect with a timeout
     unsigned long startTime = millis();
-    const unsigned long timeout = 30000; // 30 seconds timeout
+    const unsigned long timeout = 86400000; // 1 day timeout
     while (WiFi.status() != WL_CONNECTED && millis() - startTime < timeout)
     {
         delay(500);
-        Serial.print(".");
+        printf(".");
     }
+
+    printf("Connected to %s\n\n", &ssid);
 
     return WiFi.status() == WL_CONNECTED;
 }

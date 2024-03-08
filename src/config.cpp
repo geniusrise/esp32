@@ -19,7 +19,7 @@ ConfigManager::ConfigManager()
  */
 void ConfigManager::loadConfiguration()
 {
-    preferences.begin("lilygo", true); // Open in read-only mode
+    preferences.begin("ixaxaar", true); // Open in read-only mode
     // Retrieve WiFi configuration
     wifiSSID = preferences.getString("wifiSSID", "");
     wifiPassword = preferences.getString("wifiPassword", "");
@@ -54,7 +54,7 @@ void ConfigManager::loadConfiguration()
  */
 void ConfigManager::saveConfiguration()
 {
-    preferences.begin("lilygo", false); // Open in read-write mode
+    preferences.begin("ixaxaar", false); // Open in read-write mode
     // Store WiFi configuration
     preferences.putString("wifiSSID", wifiSSID);
     preferences.putString("wifiPassword", wifiPassword);
