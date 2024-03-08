@@ -1,7 +1,11 @@
 #include "speaker.h"
 
+int bassTab[7] = {1911, 1702, 1516, 1431, 1275, 1136, 1012};
+
 SpeakerManager::SpeakerManager(int speakerPin) : speakerPin(speakerPin)
 {
+    pinMode(speakerPin, OUTPUT);
+    digitalWrite(speakerPin, LOW);
 }
 
 void SpeakerManager::begin()
