@@ -23,6 +23,13 @@ WiFiManager::WiFiManager(ConfigManager &configManager, ServerManager &serverMana
 void WiFiManager::setupAPMode(const char *ssid, const char *password)
 {
     WiFi.mode(WIFI_AP); // Switch to AP mode
+
+    // Configure AP network settings
+    IPAddress localIP(192, 168, 218, 1);
+    IPAddress gateway(192, 168, 218, 1);
+    IPAddress subnet(255, 255, 255, 0);
+    WiFi.softAPConfig(localIP, gateway, subnet);
+
     WiFi.softAP(ssid, password);
 
     // Start the server

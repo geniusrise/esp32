@@ -29,128 +29,214 @@ void ServerManager::setupRoutes()
     }, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
         handleConfigBody(request, data, len, index, total);
     });
+
+    server.on("/reset", HTTP_GET, [this](AsyncWebServerRequest *request) {
+        restart(request);
+    });
 }
 
 void ServerManager::serveIndex(AsyncWebServerRequest *request)
 {
-    String html = R"(
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>ESP32 Configuration</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 20px;
-                }
-                h1 {
-                    text-align: center;
-                }
-                form {
-                    max-width: 500px;
-                    margin: 0 auto;
-                }
-                label {
-                    display: block;
-                    margin-top: 10px;
-                }
-                input[type="text"],
-                input[type="password"] {
-                    width: 100%;
-                    padding: 5px;
-                    margin-top: 5px;
-                }
-                input[type="submit"] {
-                    display: block;
-                    width: 100%;
-                    padding: 10px;
-                    margin-top: 20px;
-                    background-color: #4CAF50;
-                    color: white;
-                    border: none;
-                    cursor: pointer;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>ESP32 Configuration</h1>
-            <form>
-                <label for="wifi-ssid">WiFi SSID:</label>
-                <input type="text" id="wifi-ssid" name="wifi-ssid" required>
+String html = R"(
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geniusrise Configuration</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
-                <label for="wifi-password">WiFi Password:</label>
-                <input type="password" id="wifi-password" name="wifi-password" required>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #181a27;
+            color: #e0e0e0;
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+        h1 {
+            font-size: 6rem;
+            font-weight: 900;
+            color: yellow;
 
-                <label for="bt-device-name">Bluetooth Device Name:</label>
-                <input type="text" id="bt-device-name" name="bt-device-name" required>
+            text-align: center;
+            text-transform: capitalize;
+            text-shadow:
+                6px 6px 0 #000, /* Shadow right and bottom */
+                -1px -1px 0 #000, /* Shadow top and left */
+                1px -1px 0 #000, /* Shadow top and right */
+                -1px 1px 0 #000, /* Shadow bottom and left */
+                0 0 5px #000, /* Soft outer glow for depth */
+                8px 8px 0 #000, /* Additional layer for 3D effect */
+                10px 10px 0 #000; /* Additional layer for 3D effect */
+        }
+        form {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        fieldset {
+            border: none;
+            margin-bottom: 30px;
+        }
+        legend {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #e0e0e0;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            background-color: #333333;
+            color: #e0e0e0;
+            border-radius: 5px;
+        }
+        input[type="submit"],
+        input[type="button"] {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: white;
+            color: #0a0a0a;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+        }
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            background-color: #00cccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Geniusrise</h1>
+    <form>
+        <fieldset>
+            <legend>WiFi</legend>
+            <label for="wifi-ssid">WiFi SSID:</label>
+            <input type="text" id="wifi-ssid" name="wifi-ssid" placeholder="Enter the SSID of your WiFi network" required>
 
-                <label for="bt-device-passkey">Bluetooth Device Passkey:</label>
-                <input type="text" id="bt-device-passkey" name="bt-device-passkey" required>
+            <label for="wifi-password">WiFi Password:</label>
+            <input type="password" id="wifi-password" name="wifi-password" placeholder="Enter the password for your WiFi network" required>
+        </fieldset>
 
-                <label for="llm-host">LLM Host:</label>
-                <input type="text" id="llm-host" name="llm-host" required>
+        <fieldset>
+            <legend>Bluetooth</legend>
+            <label for="bt-device-name">Bluetooth Device Name:</label>
+            <input type="text" id="bt-device-name" name="bt-device-name" placeholder="Enter a name for your Bluetooth device">
 
-                <label for="llm-port">LLM Port:</label>
-                <input type="text" id="llm-port" name="llm-port" required>
+            <label for="bt-device-passkey">Bluetooth Device Passkey:</label>
+            <input type="text" id="bt-device-passkey" name="bt-device-passkey" placeholder="Enter a passkey for your Bluetooth device">
+        </fieldset>
 
-                <label for="llm-type">LLM Type:</label>
-                <input type="text" id="llm-type" name="llm-type" required>
+        <fieldset>
+            <legend>LLM Endpoint</legend>
+            <label for="llm-host">Base URL:</label>
+            <input type="text" id="llm-host" name="llm-host" placeholder="Enter the hostname or IP address of the LLM endpoint">
 
-                <label for="llm-endpoints">LLM Endpoints:</label>
-                <input type="text" id="llm-endpoints" name="llm-endpoints" required>
+            <label for="llm-port">Endpoint:</label>
+            <input type="text" id="llm-port" name="llm-port" placeholder="Enter the port number of the LLM endpoint">
 
-                <label for="user-name">User Name:</label>
-                <input type="text" id="user-name" name="user-name" required>
+            <label for="llm-type">Endpoint Type (openai, ollama, vllm, llama.cpp, geniusrise):</label>
+            <input type="text" id="llm-type" name="llm-type" placeholder="Enter the type of LLM being used">
 
-                <label for="user-demographics">User Demographics:</label>
-                <input type="text" id="user-demographics" name="user-demographics" required>
+            <label for="llm-endpoints">LLM Endpoints:</label>
+            <input type="text" id="llm-endpoints" name="llm-endpoints" placeholder="Enter the available LLM endpoints">
+        </fieldset>
 
-                <label for="user-username">User Username:</label>
-                <input type="text" id="user-username" name="user-username" required>
+        <fieldset>
+            <legend>User</legend>
+            <label for="user-name">User Name:</label>
+            <input type="text" id="user-name" name="user-name" placeholder="Enter your name" required>
 
-                <label for="user-password">User Password:</label>
-                <input type="password" id="user-password" name="user-password" required>
+            <label for="user-demographics">User Demographics:</label>
+            <input type="text" id="user-demographics" name="user-demographics" placeholder="Enter your demographic information" required>
 
-                <label for="system-command">System Command:</label>
-                <input type="text" id="system-command" name="system-command">
+            <label for="user-username">User Username:</label>
+            <input type="text" id="user-username" name="user-username" placeholder="Enter your username" required>
 
-                <input type="submit" value="Save Configuration">
-            </form>
+            <label for="user-password">User Password:</label>
+            <input type="password" id="user-password" name="user-password" placeholder="Enter your password" required>
+        </fieldset>
 
-            <script>
-                // JavaScript code to handle form submission and configuration update
-                const form = document.querySelector('form');
-                form.addEventListener('submit', async (event) => {
-                    event.preventDefault();
+        <fieldset>
+            <legend>System</legend>
+            <label for="system-command">System Command:</label>
+            <input type="text" id="system-command" name="system-command" placeholder="Enter a system command - optional">
+        </fieldset>
 
-                    const formData = new FormData(form);
-                    const config = Object.fromEntries(formData.entries());
+        <input type="submit" value="Save Configuration">
+        <input type="button" id="reset-button" value="Reset Board">
+    </form>
 
-                    try {
-                        const response = await fetch('/config', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(config)
-                        });
+    <script>
+        // JavaScript code to handle form submission and configuration update
+        const form = document.querySelector('form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-                        if (response.ok) {
-                            alert('Configuration updated successfully!');
-                        } else {
-                            alert('Failed to update configuration.');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred while updating the configuration.');
-                    }
+            const formData = new FormData(form);
+            const config = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(config)
                 });
-            </script>
-        </body>
-        </html>
-    )";
 
+                if (response.ok) {
+                    alert('Configuration updated successfully!');
+                } else {
+                    alert('Failed to update configuration.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating the configuration.');
+            }
+        });
+
+        function resetBoard() {
+            if (confirm("Are you sure you want to reset the board?")) {
+                fetch('/reset')
+                    .then(response => {
+                        console.log('Board is resetting...');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while resetting the board.');
+                    });
+            }
+        }
+
+        const resetButton = document.getElementById('reset-button');
+        resetButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+            resetBoard();
+        });
+    </script>
+</body>
+</html>
+)";
     request->send(200, "text/html", html);
 }
 
@@ -238,4 +324,11 @@ void ServerManager::handleConfigBody(AsyncWebServerRequest *request, uint8_t *da
 
     configManager.saveConfiguration();
     request->send(200, "application/json", "{\"message\":\"Configuration updated successfully\"}");
+}
+
+
+void ServerManager::restart(AsyncWebServerRequest *request)
+{
+    request->send(200);
+    ESP.restart();
 }

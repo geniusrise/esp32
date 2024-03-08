@@ -34,8 +34,14 @@ void setup() {
 
 void setup_loop() {
     color_printf("------ ------ ------ ------ ------ ------ ------ ------ ------\n");
-    color_printf("Main: Setup loop, wifi ssid: geniusrise, password: hellogenius\n");
+    color_printf("Main: Setup loop: connect to ssid: geniusrise, password: hellogenius, then visit http://192.168.218.1\n");
     color_printf("------ ------ ------ ------ ------ ------ ------ ------ ------\n");
+
+    String ssid = config.getWiFiSSID();
+    if (ssid != "") {
+        color_printf("Going into AP mode for setup......");
+        IN_CONFIG_MODE = false;
+    }
 }
 
 void normal_loop() {
