@@ -13,31 +13,36 @@
 ### <span style="color:#e667aa">About</span>
 
 <span style="color:#e4e48c">Geniusrise</span> is a modular, loosely-coupled
-MLOps framework designed for the era of Large Language Models,
-offering flexibility and standardization in designing networks of
-AI agents.
+MLOps framework designed for the era of Large Language Models, offering
+flexibility and standardization in designing networks of AI agents.
 
-It defines components and orchestrates them providing observability, state management and data handling,
-all while supporting diverse infrastructures. With its modular and unopinonated architecture,
+It defines components and orchestrates them providing observability, state
+management and data handling, all while supporting diverse infrastructures. With
+its modular and unopinonated architecture,
 <span style="color:#e4e48c">Geniusrise</span> empowers teams to build, share,
 and deploy AI across various platforms.
 
 Geniusrise is powered by its components:
 
-- [geniusrise-text](https://github.com/geniusrise/geniusrise-text): Text components offerring:
+- [geniusrise-text](https://github.com/geniusrise/geniusrise-text): Text
+  components offerring:
   - Inference APIs
   - Bulk inference
   - Fine-tuning
-- [geniusrise-audio](https://github.com/geniusrise/geniusrise-audio): Audio components offerring:
+- [geniusrise-audio](https://github.com/geniusrise/geniusrise-audio): Audio
+  components offerring:
   - Inference APIs
   - Bulk inference
   - Fine-tuning
-- [geniusrise-vision](https://github.com/geniusrise/geniusrise-vision): Vision components offerring:
+- [geniusrise-vision](https://github.com/geniusrise/geniusrise-vision): Vision
+  components offerring:
   - Inference APIs
   - Bulk inference
   - Fine-tuning
-- [geniusrise-listeners](https://github.com/geniusrise/geniusrise-listeners): Streaming data ingestion
-- [geniusrise-databases](https://github.com/geniusrise/geniusrise-databases): Bulk data ingestion
+- [geniusrise-listeners](https://github.com/geniusrise/geniusrise-listeners):
+  Streaming data ingestion
+- [geniusrise-databases](https://github.com/geniusrise/geniusrise-databases):
+  Bulk data ingestion
 
 ### <span style="color:#e667aa">Links</span>
 

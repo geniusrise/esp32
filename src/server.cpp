@@ -1,43 +1,37 @@
 #include "server.h"
-#include <ESPAsyncWebServer.h>
-#include <AsyncJson.h>
 #include <ArduinoJson.h>
+#include <AsyncJson.h>
+#include <ESPAsyncWebServer.h>
 
 ServerManager::ServerManager(ConfigManager &configManager)
-    : server(80), configManager(configManager)
-{
+    : server(80), configManager(configManager) {}
+
+void ServerManager::begin() {
+  setupRoutes();
+  server.begin();
 }
 
-void ServerManager::begin()
-{
-    setupRoutes();
-    server.begin();
-}
+void ServerManager::setupRoutes() {
+  server.on("/", HTTP_GET,
+            [this](AsyncWebServerRequest *request) { serveIndex(request); });
 
-void ServerManager::setupRoutes()
-{
-    server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request) {
-        serveIndex(request);
-    });
+  server.on("/config", HTTP_GET,
+            [this](AsyncWebServerRequest *request) { getConfig(request); });
 
-    server.on("/config", HTTP_GET, [this](AsyncWebServerRequest *request) {
-        getConfig(request);
-    });
-
-    server.on("/config", HTTP_POST, [this](AsyncWebServerRequest *request) {
-        setConfig(request);
-    }, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+  server.on(
+      "/config", HTTP_POST,
+      [this](AsyncWebServerRequest *request) { setConfig(request); }, NULL,
+      [this](AsyncWebServerRequest *request, uint8_t *data, size_t len,
+             size_t index, size_t total) {
         handleConfigBody(request, data, len, index, total);
-    });
+      });
 
-    server.on("/reset", HTTP_GET, [this](AsyncWebServerRequest *request) {
-        restart(request);
-    });
+  server.on("/reset", HTTP_GET,
+            [this](AsyncWebServerRequest *request) { restart(request); });
 }
 
-void ServerManager::serveIndex(AsyncWebServerRequest *request)
-{
-String html = R"(
+void ServerManager::serveIndex(AsyncWebServerRequest *request) {
+  String html = R"(
 <!DOCTYPE html>
 <html>
 <head>
@@ -207,81 +201,79 @@ String html = R"(
 </body>
 </html>
 )";
-    request->send(200, "text/html", html);
+  request->send(200, "text/html", html);
 }
 
-void ServerManager::getConfig(AsyncWebServerRequest *request)
-{
-    DynamicJsonDocument doc(2048); // Adjust size as needed based on your configuration complexity
+void ServerManager::getConfig(AsyncWebServerRequest *request) {
+  DynamicJsonDocument doc(
+      2048); // Adjust size as needed based on your configuration complexity
 
-    // WiFi Configuration
-    doc["wifi-ssid"] = configManager.getWiFiSSID();
-    doc["wifi-password"] = configManager.getWiFiPassword(); // Ensure this is secure/safe to expose
+  // WiFi Configuration
+  doc["wifi-ssid"] = configManager.getWiFiSSID();
+  doc["wifi-password"] =
+      configManager.getWiFiPassword(); // Ensure this is secure/safe to expose
 
-    // User Configuration
-    doc["user-name"] = configManager.getUserConfig().name;
-    doc["user-username"] = configManager.getUserConfig().username;
-    doc["user-password"] = configManager.getUserConfig().password; // Consider security implications
-    doc["user-settings"] = configManager.getUserConfig().userSettings;
+  // User Configuration
+  doc["user-name"] = configManager.getUserConfig().name;
+  doc["user-username"] = configManager.getUserConfig().username;
+  doc["user-password"] =
+      configManager.getUserConfig().password; // Consider security implications
+  doc["user-settings"] = configManager.getUserConfig().userSettings;
 
-    String output;
-    serializeJson(doc, output);
-    request->send(200, "application/json", output);
+  String output;
+  serializeJson(doc, output);
+  request->send(200, "application/json", output);
 }
 
-void ServerManager::setConfig(AsyncWebServerRequest *request)
-{
-    request->send(200);
+void ServerManager::setConfig(AsyncWebServerRequest *request) {
+  request->send(200);
 }
 
-void ServerManager::handleConfigBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
-    DynamicJsonDocument doc(2048); // Adjust size based on your needs
-    DeserializationError error = deserializeJson(doc, data, len);
+void ServerManager::handleConfigBody(AsyncWebServerRequest *request,
+                                     uint8_t *data, size_t len, size_t index,
+                                     size_t total) {
+  DynamicJsonDocument doc(2048); // Adjust size based on your needs
+  DeserializationError error = deserializeJson(doc, data, len);
 
-    if (error)
-    {
-        request->send(400, "text/plain", "Failed to parse request body");
-        return;
-    }
+  if (error) {
+    request->send(400, "text/plain", "Failed to parse request body");
+    return;
+  }
 
-    // Update WiFi Configuration
-    String wifiSSID = doc["wifi-ssid"].as<String>();
-    String wifiPassword = doc["wifi-password"].as<String>();
+  // Update WiFi Configuration
+  String wifiSSID = doc["wifi-ssid"].as<String>();
+  String wifiPassword = doc["wifi-password"].as<String>();
 
-    if (!wifiSSID.isEmpty())
-    {
-        configManager.setWiFiSSID(wifiSSID);
-    }
+  if (!wifiSSID.isEmpty()) {
+    configManager.setWiFiSSID(wifiSSID);
+  }
 
-    if (!wifiPassword.isEmpty())
-    {
-        configManager.setWiFiPassword(wifiPassword);
-    }
+  if (!wifiPassword.isEmpty()) {
+    configManager.setWiFiPassword(wifiPassword);
+  }
 
-    // Update User Configuration
-    String userName = doc["user-name"].as<String>();
-    String userUsername = doc["user-username"].as<String>();
-    String userPassword = doc["user-password"].as<String>();
-    String userSettings = doc["user-settings"].as<String>();
+  // Update User Configuration
+  String userName = doc["user-name"].as<String>();
+  String userUsername = doc["user-username"].as<String>();
+  String userPassword = doc["user-password"].as<String>();
+  String userSettings = doc["user-settings"].as<String>();
 
-    UserConfig currentConfig = configManager.getUserConfig();
+  UserConfig currentConfig = configManager.getUserConfig();
 
-    UserConfig userConfig = {
-        userName.isEmpty() ? currentConfig.name : userName,
-        userUsername.isEmpty() ? currentConfig.username : userUsername,
-        userPassword.isEmpty() ? currentConfig.password : userPassword,
-        userSettings.isEmpty() ? currentConfig.userSettings : userSettings
-    };
+  UserConfig userConfig = {
+      userName.isEmpty() ? currentConfig.name : userName,
+      userUsername.isEmpty() ? currentConfig.username : userUsername,
+      userPassword.isEmpty() ? currentConfig.password : userPassword,
+      userSettings.isEmpty() ? currentConfig.userSettings : userSettings};
 
-    configManager.setUserConfig(userConfig);
+  configManager.setUserConfig(userConfig);
 
-    configManager.saveConfiguration();
-    request->send(200, "application/json", "{\"message\":\"Configuration updated successfully\"}");
+  configManager.saveConfiguration();
+  request->send(200, "application/json",
+                "{\"message\":\"Configuration updated successfully\"}");
 }
 
-void ServerManager::restart(AsyncWebServerRequest *request)
-{
-    request->send(200);
-    ESP.restart();
+void ServerManager::restart(AsyncWebServerRequest *request) {
+  request->send(200);
+  ESP.restart();
 }

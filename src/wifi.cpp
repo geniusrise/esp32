@@ -1,51 +1,52 @@
 #include "wifi.h"
-#include "util.h"
 #include "config.h"
 #include "server.h"
+#include "util.h"
 
 /**
  * @brief Constructs a new WiFiManager object.
  *
  * Initializes the WiFi stack.
  */
-WiFiManager::WiFiManager(ConfigManager &configManager, ServerManager &serverManager)
-    : serverManager(serverManager)
-{
-    WiFi.mode(WIFI_OFF); // Ensure WiFi is off before setting up new mode
+WiFiManager::WiFiManager(ConfigManager &configManager,
+                         ServerManager &serverManager)
+    : serverManager(serverManager) {
+  WiFi.mode(WIFI_OFF); // Ensure WiFi is off before setting up new mode
 }
 
 /**
- * @brief Sets up the device in AP (Access Point) mode with the provided SSID and password.
+ * @brief Sets up the device in AP (Access Point) mode with the provided SSID
+ * and password.
  *
  * @param ssid The SSID for the AP.
  * @param password The password for the AP.
  */
-void WiFiManager::setupAPMode(const char *ssid, const char *password)
-{
-    WiFi.mode(WIFI_AP); // Switch to AP mode
+void WiFiManager::setupAPMode(const char *ssid, const char *password) {
+  WiFi.mode(WIFI_AP); // Switch to AP mode
 
-    // Configure AP network settings
-    IPAddress localIP(192, 168, 218, 1);
-    IPAddress gateway(192, 168, 218, 1);
-    IPAddress subnet(255, 255, 255, 0);
-    WiFi.softAPConfig(localIP, gateway, subnet);
+  // Configure AP network settings
+  IPAddress localIP(192, 168, 218, 1);
+  IPAddress gateway(192, 168, 218, 1);
+  IPAddress subnet(255, 255, 255, 0);
+  WiFi.softAPConfig(localIP, gateway, subnet);
 
-    WiFi.softAP(ssid, password);
+  WiFi.softAP(ssid, password);
 
-    // Start the server
-    serverManager.begin();
+  // Start the server
+  serverManager.begin();
 }
 
 /**
- * @brief Connects the device to a saved WiFi network using the provided SSID and password.
+ * @brief Connects the device to a saved WiFi network using the provided SSID
+ * and password.
  *
  * @param ssid The SSID of the WiFi network.
  * @param password The password of the WiFi network.
  */
-void WiFiManager::connectToSavedNetwork(const char *ssid, const char *password)
-{
-    WiFi.mode(WIFI_STA); // Switch to STA (Station) mode
-    connectToNetwork(ssid, password);
+void WiFiManager::connectToSavedNetwork(const char *ssid,
+                                        const char *password) {
+  WiFi.mode(WIFI_STA); // Switch to STA (Station) mode
+  connectToNetwork(ssid, password);
 }
 
 /**
@@ -54,38 +55,29 @@ void WiFiManager::connectToSavedNetwork(const char *ssid, const char *password)
  * @return true If the device is connected.
  * @return false If the device is not connected.
  */
-bool WiFiManager::isConnected() const
-{
-    return WiFi.status() == WL_CONNECTED;
-}
+bool WiFiManager::isConnected() const { return WiFi.status() == WL_CONNECTED; }
 
 /**
- * @brief Gets the IP Address of the device when connected to a WiFi network or running an AP.
+ * @brief Gets the IP Address of the device when connected to a WiFi network or
+ * running an AP.
  *
  * @return IPAddress The IP Address of the device.
  */
-IPAddress WiFiManager::getIPAddress() const
-{
-    return WiFi.localIP();
-}
+IPAddress WiFiManager::getIPAddress() const { return WiFi.localIP(); }
 
 /**
  * @brief Disconnects the device from the WiFi network.
  */
-void WiFiManager::disconnect()
-{
-    WiFi.disconnect();
-}
+void WiFiManager::disconnect() { WiFi.disconnect(); }
 
 /**
  * @brief Handles client requests when the device is in AP mode.
  *
  * This should be called in the main loop to handle incoming client requests.
  */
-void WiFiManager::handleClient()
-{
-    // No need to handle client requests explicitly
-    // The asynchronous web server will handle the requests automatically
+void WiFiManager::handleClient() {
+  // No need to handle client requests explicitly
+  // The asynchronous web server will handle the requests automatically
 }
 
 /**
@@ -96,20 +88,18 @@ void WiFiManager::handleClient()
  * @return true If the connection was successful.
  * @return false If the connection failed.
  */
-bool WiFiManager::connectToNetwork(const char *ssid, const char *password)
-{
-    WiFi.begin(ssid, password);
+bool WiFiManager::connectToNetwork(const char *ssid, const char *password) {
+  WiFi.begin(ssid, password);
 
-    // Attempt to connect with a timeout
-    unsigned long startTime = millis();
-    const unsigned long timeout = 86400000; // 1 day timeout
-    while (WiFi.status() != WL_CONNECTED && millis() - startTime < timeout)
-    {
-        delay(500);
-        printf(".");
-    }
+  // Attempt to connect with a timeout
+  unsigned long startTime = millis();
+  const unsigned long timeout = 86400000; // 1 day timeout
+  while (WiFi.status() != WL_CONNECTED && millis() - startTime < timeout) {
+    delay(500);
+    printf(".");
+  }
 
-    printf("Connected to %s\n\n", &ssid);
+  printf("Connected to %s\n\n", &ssid);
 
-    return WiFi.status() == WL_CONNECTED;
+  return WiFi.status() == WL_CONNECTED;
 }

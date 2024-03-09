@@ -16,17 +16,17 @@ void print_logo() {
   printf("\n");
 }
 
-void color_printf(const char* format, ...) {
+void color_printf(const char *format, ...) {
   va_list args;
   va_start(args, format);
 
-  const char* colors[] = {
-    "\033[1;31m", // Red
-    "\033[1;32m", // Green
-    "\033[1;33m", // Yellow
-    "\033[1;34m", // Blue
-    "\033[1;35m", // Magenta
-    "\033[1;36m"  // Cyan
+  const char *colors[] = {
+      "\033[1;31m", // Red
+      "\033[1;32m", // Green
+      "\033[1;33m", // Yellow
+      "\033[1;34m", // Blue
+      "\033[1;35m", // Magenta
+      "\033[1;36m"  // Cyan
   };
   const int num_colors = sizeof(colors) / sizeof(colors[0]);
 
