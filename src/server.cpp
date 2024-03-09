@@ -138,48 +138,18 @@ String html = R"(
         </fieldset>
 
         <fieldset>
-            <legend>Bluetooth</legend>
-            <label for="bt-device-name">Bluetooth Device Name:</label>
-            <input type="text" id="bt-device-name" name="bt-device-name" placeholder="Enter a name for your Bluetooth device">
-
-            <label for="bt-device-passkey">Bluetooth Device Passkey:</label>
-            <input type="text" id="bt-device-passkey" name="bt-device-passkey" placeholder="Enter a passkey for your Bluetooth device">
-        </fieldset>
-
-        <fieldset>
-            <legend>LLM Endpoint</legend>
-            <label for="llm-host">Base URL:</label>
-            <input type="text" id="llm-host" name="llm-host" placeholder="Enter the hostname or IP address of the LLM endpoint">
-
-            <label for="llm-port">Endpoint:</label>
-            <input type="text" id="llm-port" name="llm-port" placeholder="Enter the port number of the LLM endpoint">
-
-            <label for="llm-type">Endpoint Type (openai, ollama, vllm, llama.cpp, geniusrise):</label>
-            <input type="text" id="llm-type" name="llm-type" placeholder="Enter the type of LLM being used">
-
-            <label for="llm-endpoints">LLM Endpoints:</label>
-            <input type="text" id="llm-endpoints" name="llm-endpoints" placeholder="Enter the available LLM endpoints">
-        </fieldset>
-
-        <fieldset>
             <legend>User</legend>
-            <label for="user-name">User Name:</label>
-            <input type="text" id="user-name" name="user-name" placeholder="Enter your name" required>
-
-            <label for="user-demographics">User Demographics:</label>
-            <input type="text" id="user-demographics" name="user-demographics" placeholder="Enter your demographic information" required>
+            <label for="user-name">Name:</label>
+            <input type="text" id="user-name" name="user-name" placeholder="What would you like me to call you?" required>
 
             <label for="user-username">User Username:</label>
-            <input type="text" id="user-username" name="user-username" placeholder="Enter your username" required>
+            <input type="text" id="user-username" name="user-username" placeholder="Enter your geniusrise username" required>
 
             <label for="user-password">User Password:</label>
-            <input type="password" id="user-password" name="user-password" placeholder="Enter your password" required>
-        </fieldset>
+            <input type="password" id="user-password" name="user-password" placeholder="Enter your geniusrise key" required>
 
-        <fieldset>
-            <legend>System</legend>
-            <label for="system-command">System Command:</label>
-            <input type="text" id="system-command" name="system-command" placeholder="Enter a system command - optional">
+            <label for="user-settings">User Settings:</label>
+            <input type="text" id="user-settings" name="user-settings" placeholder="Enter custom user settings JSON">
         </fieldset>
 
         <input type="submit" value="Save Configuration">
@@ -245,28 +215,14 @@ void ServerManager::getConfig(AsyncWebServerRequest *request)
     DynamicJsonDocument doc(2048); // Adjust size as needed based on your configuration complexity
 
     // WiFi Configuration
-    doc["wifi"]["ssid"] = configManager.getWiFiSSID();
-    doc["wifi"]["password"] = configManager.getWiFiPassword(); // Ensure this is secure/safe to expose
-
-    // Bluetooth Configuration
-    doc["bluetooth"]["deviceName"] = configManager.getBluetoothConfig().deviceName;
-    doc["bluetooth"]["devicePasskey"] = configManager.getBluetoothConfig().devicePasskey;
-    doc["bluetooth"]["paired"] = configManager.getBluetoothConfig().paired;
-
-    // LLM Endpoint Configuration
-    doc["llm"]["host"] = configManager.getLLMEndpointConfig().host;
-    doc["llm"]["port"] = configManager.getLLMEndpointConfig().port;
-    doc["llm"]["type"] = configManager.getLLMEndpointConfig().type;
-    doc["llm"]["endpoints"] = configManager.getLLMEndpointConfig().endpoints;
+    doc["wifi-ssid"] = configManager.getWiFiSSID();
+    doc["wifi-password"] = configManager.getWiFiPassword(); // Ensure this is secure/safe to expose
 
     // User Configuration
-    doc["user"]["name"] = configManager.getUserConfig().name;
-    doc["user"]["demographics"] = configManager.getUserConfig().demographics;
-    doc["user"]["username"] = configManager.getUserConfig().username;
-    doc["user"]["password"] = configManager.getUserConfig().password; // Consider security implications
-
-    // System Command
-    doc["systemCommand"] = configManager.getSystemCommand();
+    doc["user-name"] = configManager.getUserConfig().name;
+    doc["user-username"] = configManager.getUserConfig().username;
+    doc["user-password"] = configManager.getUserConfig().password; // Consider security implications
+    doc["user-settings"] = configManager.getUserConfig().userSettings;
 
     String output;
     serializeJson(doc, output);
@@ -290,42 +246,39 @@ void ServerManager::handleConfigBody(AsyncWebServerRequest *request, uint8_t *da
     }
 
     // Update WiFi Configuration
-    configManager.setWiFiSSID(doc["wifi"]["ssid"].as<String>());
-    configManager.setWiFiPassword(doc["wifi"]["password"].as<String>());
+    String wifiSSID = doc["wifi-ssid"].as<String>();
+    String wifiPassword = doc["wifi-password"].as<String>();
 
-    // Update Bluetooth Configuration
-    BluetoothConfig btConfig = {
-        doc["bluetooth"]["deviceName"].as<String>(),
-        doc["bluetooth"]["devicePasskey"].as<String>(),
-        doc["bluetooth"]["paired"].as<bool>()};
-    configManager.setBluetoothConfig(btConfig);
+    if (!wifiSSID.isEmpty())
+    {
+        configManager.setWiFiSSID(wifiSSID);
+    }
 
-    // Update LLM Endpoint Configuration
-    LLMEndpointConfig llmConfig = {
-        doc["llm"]["host"].as<String>(),
-        static_cast<uint16_t>(doc["llm"]["port"].as<unsigned int>()), // Casting to uint16_t
-        doc["llm"]["type"].as<String>(),
-        doc["llm"]["endpoints"].as<String>()};
-    configManager.setLLMEndpointConfig(llmConfig);
+    if (!wifiPassword.isEmpty())
+    {
+        configManager.setWiFiPassword(wifiPassword);
+    }
 
     // Update User Configuration
-    UserConfig userConfig = {
-        doc["user"]["name"].as<String>(),
-        doc["user"]["demographics"].as<String>(),
-        doc["user"]["username"].as<String>(),
-        doc["user"]["password"].as<String>()};
-    configManager.setUserConfig(userConfig);
+    String userName = doc["user-name"].as<String>();
+    String userUsername = doc["user-username"].as<String>();
+    String userPassword = doc["user-password"].as<String>();
+    String userSettings = doc["user-settings"].as<String>();
 
-    // Update System Command
-    if (doc.containsKey("systemCommand"))
-    {
-        configManager.setSystemCommand(doc["systemCommand"].as<String>());
-    }
+    UserConfig currentConfig = configManager.getUserConfig();
+
+    UserConfig userConfig = {
+        userName.isEmpty() ? currentConfig.name : userName,
+        userUsername.isEmpty() ? currentConfig.username : userUsername,
+        userPassword.isEmpty() ? currentConfig.password : userPassword,
+        userSettings.isEmpty() ? currentConfig.userSettings : userSettings
+    };
+
+    configManager.setUserConfig(userConfig);
 
     configManager.saveConfiguration();
     request->send(200, "application/json", "{\"message\":\"Configuration updated successfully\"}");
 }
-
 
 void ServerManager::restart(AsyncWebServerRequest *request)
 {

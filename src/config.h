@@ -1,30 +1,15 @@
-#ifndef CONFIG_MANAGER_H
-#define CONFIG_MANAGER_H
+#ifndef CONFIG_MANAGER_HPP
+#define CONFIG_MANAGER_HPP
 
 #include <Arduino.h>
-#include <ArduinoJson.h>
-
-struct BluetoothConfig
-{
-    String deviceName;
-    String devicePasskey;
-    bool paired;
-};
-
-struct LLMEndpointConfig
-{
-    String host;
-    uint16_t port;
-    String type;      // "openai" or "geniusrise"
-    String endpoints; // Comma-separated list like "llm,multimodal,vision,audio"
-};
+#include <map>
 
 struct UserConfig
 {
     String name;
-    String demographics;
     String username;
     String password;
+    String userSettings;
 };
 
 class ConfigManager
@@ -36,32 +21,17 @@ public:
 
     String getWiFiSSID() const;
     void setWiFiSSID(const String &ssid);
-
     String getWiFiPassword() const;
     void setWiFiPassword(const String &password);
-
-    BluetoothConfig getBluetoothConfig() const;
-    void setBluetoothConfig(const BluetoothConfig &config);
-
-    LLMEndpointConfig getLLMEndpointConfig() const;
-    void setLLMEndpointConfig(const LLMEndpointConfig &config);
 
     UserConfig getUserConfig() const;
     void setUserConfig(const UserConfig &config);
 
-    String getSystemCommand() const;
-    void setSystemCommand(const String &command);
-
 private:
     String wifiSSID;
     String wifiPassword;
-    BluetoothConfig bluetoothConfig;
-    LLMEndpointConfig llmEndpointConfig;
     UserConfig userConfig;
-    String systemCommand;
-
-    void readFromFlash();
-    void writeToFlash();
+    std::map<String, String> customConfig;
 };
 
-#endif // CONFIG_MANAGER_H
+#endif // CONFIG_MANAGER_HPP
