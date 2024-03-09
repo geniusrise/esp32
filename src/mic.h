@@ -4,6 +4,8 @@
 #include "driver/i2s.h"
 #include <Arduino.h>
 
+using AudioBufferCallback = void (*)(void);
+
 class MicManager
 {
 public:
@@ -13,6 +15,7 @@ public:
   void stopRecording();
   char* getRecordedAudio();
   size_t getRecordedAudioSize();
+  void setCallback(AudioBufferCallback callback);
 
   static void audioTaskWrapper(void* param);
 
@@ -24,6 +27,7 @@ private:
   size_t _bufferSize;
   size_t _recordedSize;
   bool _isRecording;
+  AudioBufferCallback _callback;
 
   void initializeI2S();
   void deinitializeI2S();

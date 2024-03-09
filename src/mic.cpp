@@ -7,6 +7,10 @@
 #define CHANNELS (1)
 #define BITS_PER_SAMPLE (32)
 
+#define MAX_SECONDS_TO_BUFFER 5
+#define AUDIO_BUFFER_SIZE                                                      \
+  (MAX_SECONDS_TO_BUFFER * SAMPLE_RATE * CHANNELS * BITS_PER_SAMPLE / 8)
+
 MicManager::MicManager(int bckPin, int wsPin, int dataPin)
   : _bckPin(bckPin)
   , _wsPin(wsPin)
@@ -50,12 +54,16 @@ MicManager::deinitializeI2S()
 }
 
 void
+MicManager::setCallback(AudioBufferCallback callback)
+{
+  _callback = callback;
+}
+
+void
 MicManager::startRecording()
 {
-  _bufferSize = SAMPLE_RATE * CHANNELS * (BITS_PER_SAMPLE / 8) *
-                2; // For 2 seconds of audio
   if (_audioBuffer == nullptr) {
-    _audioBuffer = static_cast<uint8_t*>(malloc(_bufferSize));
+    _audioBuffer = static_cast<uint8_t*>(malloc(AUDIO_BUFFER_SIZE));
   }
   _recordedSize = 0;
   _isRecording = true;
@@ -100,19 +108,36 @@ MicManager::audioTask()
 {
   size_t bytesRead;
   while (_isRecording) {
-    uint8_t tempBuffer[512]; // Adjust buffer size based on expected data rate
-    // and available memory
-    i2s_read(
-      I2S_NUM_0, &tempBuffer, sizeof(tempBuffer), &bytesRead, portMAX_DELAY);
-    // Here, you would process and store the read data. This example omits
-    // the complexity of that process.
+    // Determine how much space is left in the buffer
+    size_t remainingSpace = AUDIO_BUFFER_SIZE - _recordedSize;
+
+    uint8_t tempBuffer[512];
+
+    // Read only as much as can fit in the remaining space of the buffer
+    size_t toRead = sizeof(tempBuffer) <= remainingSpace ? sizeof(tempBuffer)
+                                                         : remainingSpace;
+    i2s_read(I2S_NUM_0, tempBuffer, toRead, &bytesRead, portMAX_DELAY);
+
     if (bytesRead > 0) {
-      // Dummy processing, replace with actual storage or processing logic
+      // Ensure we don't read beyond the buffer size
+      if (_recordedSize + bytesRead > AUDIO_BUFFER_SIZE) {
+        bytesRead = AUDIO_BUFFER_SIZE - _recordedSize;
+      }
+
+      // Copy the data into the main audio buffer
+      memcpy(_audioBuffer + _recordedSize, tempBuffer, bytesRead);
       _recordedSize += bytesRead;
-      if (_recordedSize > _bufferSize) {
-        // Handle buffer overflow or dynamically increase buffer size as
-        // needed
-        _recordedSize = _bufferSize; // Prevent overflow in this dummy example
+
+      // Check if the buffer is half full or more
+      if (_recordedSize >= AUDIO_BUFFER_SIZE / 2) {
+        // Trigger the callback if set
+        if (_callback) {
+          _callback();
+        }
+
+        // Reset the buffer and its size after the callback has been triggered
+        memset(_audioBuffer, 0, AUDIO_BUFFER_SIZE);
+        _recordedSize = 0;
       }
     }
   }
