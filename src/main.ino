@@ -13,7 +13,9 @@ WiFiManager wiFiManager = WiFiManager(config, server);
 bool IN_CONFIG_MODE = false;
 String ipAddress;
 
-void setup() {
+void
+setup()
+{
   // Initialize the state machine, which will also initialize all other managers
   print_logo();
 
@@ -32,13 +34,15 @@ void setup() {
   }
 }
 
-void setup_loop() {
+void
+setup_loop()
+{
   color_printf(
-      "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
+    "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
   color_printf("Main: Setup loop: connect to ssid: geniusrise, password: "
                "hellogenius, then visit http://192.168.218.1\n");
   color_printf(
-      "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
+    "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
 
   // String ssid = config.getWiFiSSID();
   // String password = config.getWiFiPassword();
@@ -51,18 +55,22 @@ void setup_loop() {
   // }
 }
 
-void normal_loop() {
+void
+normal_loop()
+{
   color_printf(
-      "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
+    "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
   color_printf("Main: Start main loop, ip:");
   printf("%s\n", ipAddress.c_str());
 
   color_printf(
-      "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
+    "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
   delay(500);
 }
 
-void loop() {
+void
+loop()
+{
   if (IN_CONFIG_MODE) {
     setup_loop();
   } else {

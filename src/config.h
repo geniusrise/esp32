@@ -4,26 +4,28 @@
 #include <Arduino.h>
 #include <map>
 
-struct UserConfig {
+struct UserConfig
+{
   String name;
   String username;
   String password;
   String userSettings;
 };
 
-class ConfigManager {
+class ConfigManager
+{
 public:
   ConfigManager();
   void loadConfiguration();
   void saveConfiguration();
 
   String getWiFiSSID() const;
-  void setWiFiSSID(const String &ssid);
+  void setWiFiSSID(const String& ssid);
   String getWiFiPassword() const;
-  void setWiFiPassword(const String &password);
+  void setWiFiPassword(const String& password);
 
   UserConfig getUserConfig() const;
-  void setUserConfig(const UserConfig &config);
+  void setUserConfig(const UserConfig& config);
 
 private:
   String wifiSSID;

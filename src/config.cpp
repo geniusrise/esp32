@@ -7,7 +7,8 @@ Preferences preferences; // Global preferences object for flash storage access
  * @brief Constructs a new Config Manager object and loads the saved
  * configuration.
  */
-ConfigManager::ConfigManager() {
+ConfigManager::ConfigManager()
+{
   loadConfiguration(); // Load configuration on object creation
 }
 
@@ -18,7 +19,9 @@ ConfigManager::ConfigManager() {
  * Opens the non-volatile storage in read-only mode and retrieves the stored
  * values for the configuration. If no value is found, default values are set.
  */
-void ConfigManager::loadConfiguration() {
+void
+ConfigManager::loadConfiguration()
+{
   preferences.begin("ixaxaar", true); // Open in read-only mode
   // Retrieve WiFi configuration
   wifiSSID = preferences.getString("wifiSSID", "");
@@ -39,7 +42,9 @@ void ConfigManager::loadConfiguration() {
  * Opens the non-volatile storage in write mode and writes the current values
  * of the class properties to the storage.
  */
-void ConfigManager::saveConfiguration() {
+void
+ConfigManager::saveConfiguration()
+{
   preferences.begin("ixaxaar", false); // Open in read-write mode
   // Store WiFi configuration
   preferences.putString("wifiSSID", wifiSSID);
@@ -59,14 +64,20 @@ void ConfigManager::saveConfiguration() {
  *
  * @return String The stored WiFi SSID.
  */
-String ConfigManager::getWiFiSSID() const { return wifiSSID; }
+String
+ConfigManager::getWiFiSSID() const
+{
+  return wifiSSID;
+}
 
 /**
  * @brief Sets the WiFi SSID and saves the configuration.
  *
  * @param ssid The WiFi SSID to be set.
  */
-void ConfigManager::setWiFiSSID(const String &ssid) {
+void
+ConfigManager::setWiFiSSID(const String& ssid)
+{
   wifiSSID = ssid;
   saveConfiguration();
 }
@@ -76,14 +87,20 @@ void ConfigManager::setWiFiSSID(const String &ssid) {
  *
  * @return String The stored WiFi password.
  */
-String ConfigManager::getWiFiPassword() const { return wifiPassword; }
+String
+ConfigManager::getWiFiPassword() const
+{
+  return wifiPassword;
+}
 
 /**
  * @brief Sets the WiFi password and saves the configuration.
  *
  * @param password The WiFi password to be set.
  */
-void ConfigManager::setWiFiPassword(const String &password) {
+void
+ConfigManager::setWiFiPassword(const String& password)
+{
   wifiPassword = password;
   saveConfiguration();
 }
@@ -94,14 +111,20 @@ void ConfigManager::setWiFiPassword(const String &password) {
  * @return UserConfig The stored user configuration including name, username,
  * and password.
  */
-UserConfig ConfigManager::getUserConfig() const { return userConfig; }
+UserConfig
+ConfigManager::getUserConfig() const
+{
+  return userConfig;
+}
 
 /**
  * @brief Sets the user configuration and saves it to the storage.
  *
  * @param config The UserConfig structure containing user details to be set.
  */
-void ConfigManager::setUserConfig(const UserConfig &config) {
+void
+ConfigManager::setUserConfig(const UserConfig& config)
+{
   userConfig = config;
   saveConfiguration();
 }

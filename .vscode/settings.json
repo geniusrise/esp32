@@ -8,5 +8,12 @@
         "string_view": "cpp",
         "initializer_list": "cpp",
         "*.tpp": "cpp"
-    }
+    },
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "C_Cpp.clang_format_style": "Mozilla",
+    "window.zoomLevel": 1,
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.clang_format_sortIncludes": true
 }

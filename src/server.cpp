@@ -3,34 +3,51 @@
 #include <AsyncJson.h>
 #include <ESPAsyncWebServer.h>
 
-ServerManager::ServerManager(ConfigManager &configManager)
-    : server(80), configManager(configManager) {}
+ServerManager::ServerManager(ConfigManager& configManager)
+  : server(80)
+  , configManager(configManager)
+{
+}
 
-void ServerManager::begin() {
+void
+ServerManager::begin()
+{
   setupRoutes();
   server.begin();
 }
 
-void ServerManager::setupRoutes() {
-  server.on("/", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { serveIndex(request); });
+void
+ServerManager::setupRoutes()
+{
+  server.on("/", HTTP_GET, [this](AsyncWebServerRequest* request) {
+    serveIndex(request);
+  });
 
-  server.on("/config", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { getConfig(request); });
+  server.on("/config", HTTP_GET, [this](AsyncWebServerRequest* request) {
+    getConfig(request);
+  });
 
   server.on(
-      "/config", HTTP_POST,
-      [this](AsyncWebServerRequest *request) { setConfig(request); }, NULL,
-      [this](AsyncWebServerRequest *request, uint8_t *data, size_t len,
-             size_t index, size_t total) {
-        handleConfigBody(request, data, len, index, total);
-      });
+    "/config",
+    HTTP_POST,
+    [this](AsyncWebServerRequest* request) { setConfig(request); },
+    NULL,
+    [this](AsyncWebServerRequest* request,
+           uint8_t* data,
+           size_t len,
+           size_t index,
+           size_t total) {
+      handleConfigBody(request, data, len, index, total);
+    });
 
-  server.on("/reset", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { restart(request); });
+  server.on("/reset", HTTP_GET, [this](AsyncWebServerRequest* request) {
+    restart(request);
+  });
 }
 
-void ServerManager::serveIndex(AsyncWebServerRequest *request) {
+void
+ServerManager::serveIndex(AsyncWebServerRequest* request)
+{
   String html = R"(
 <!DOCTYPE html>
 <html>
@@ -204,20 +221,22 @@ void ServerManager::serveIndex(AsyncWebServerRequest *request) {
   request->send(200, "text/html", html);
 }
 
-void ServerManager::getConfig(AsyncWebServerRequest *request) {
+void
+ServerManager::getConfig(AsyncWebServerRequest* request)
+{
   DynamicJsonDocument doc(
-      2048); // Adjust size as needed based on your configuration complexity
+    2048); // Adjust size as needed based on your configuration complexity
 
   // WiFi Configuration
   doc["wifi-ssid"] = configManager.getWiFiSSID();
   doc["wifi-password"] =
-      configManager.getWiFiPassword(); // Ensure this is secure/safe to expose
+    configManager.getWiFiPassword(); // Ensure this is secure/safe to expose
 
   // User Configuration
   doc["user-name"] = configManager.getUserConfig().name;
   doc["user-username"] = configManager.getUserConfig().username;
   doc["user-password"] =
-      configManager.getUserConfig().password; // Consider security implications
+    configManager.getUserConfig().password; // Consider security implications
   doc["user-settings"] = configManager.getUserConfig().userSettings;
 
   String output;
@@ -225,13 +244,19 @@ void ServerManager::getConfig(AsyncWebServerRequest *request) {
   request->send(200, "application/json", output);
 }
 
-void ServerManager::setConfig(AsyncWebServerRequest *request) {
+void
+ServerManager::setConfig(AsyncWebServerRequest* request)
+{
   request->send(200);
 }
 
-void ServerManager::handleConfigBody(AsyncWebServerRequest *request,
-                                     uint8_t *data, size_t len, size_t index,
-                                     size_t total) {
+void
+ServerManager::handleConfigBody(AsyncWebServerRequest* request,
+                                uint8_t* data,
+                                size_t len,
+                                size_t index,
+                                size_t total)
+{
   DynamicJsonDocument doc(2048); // Adjust size based on your needs
   DeserializationError error = deserializeJson(doc, data, len);
 
@@ -261,19 +286,23 @@ void ServerManager::handleConfigBody(AsyncWebServerRequest *request,
   UserConfig currentConfig = configManager.getUserConfig();
 
   UserConfig userConfig = {
-      userName.isEmpty() ? currentConfig.name : userName,
-      userUsername.isEmpty() ? currentConfig.username : userUsername,
-      userPassword.isEmpty() ? currentConfig.password : userPassword,
-      userSettings.isEmpty() ? currentConfig.userSettings : userSettings};
+    userName.isEmpty() ? currentConfig.name : userName,
+    userUsername.isEmpty() ? currentConfig.username : userUsername,
+    userPassword.isEmpty() ? currentConfig.password : userPassword,
+    userSettings.isEmpty() ? currentConfig.userSettings : userSettings
+  };
 
   configManager.setUserConfig(userConfig);
 
   configManager.saveConfiguration();
-  request->send(200, "application/json",
+  request->send(200,
+                "application/json",
                 "{\"message\":\"Configuration updated successfully\"}");
 }
 
-void ServerManager::restart(AsyncWebServerRequest *request) {
+void
+ServerManager::restart(AsyncWebServerRequest* request)
+{
   request->send(200);
   ESP.restart();
 }
