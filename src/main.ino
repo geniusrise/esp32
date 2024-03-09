@@ -1,4 +1,5 @@
 #include "config.h"
+#include "display.h"
 #include "driver/gpio.h"
 #include "server.h"
 #include "speaker.h"
@@ -9,6 +10,7 @@
 ConfigManager config = ConfigManager();
 ServerManager server = ServerManager(config);
 WiFiManager wiFiManager = WiFiManager(config, server);
+Display display = Display();
 
 bool IN_CONFIG_MODE = false;
 String ipAddress;
@@ -17,7 +19,11 @@ void
 setup()
 {
   // Initialize the state machine, which will also initialize all other managers
+  delay(5000);
+
   print_logo();
+  display.begin();
+  // display.showHappyFace();
 
   String ssid = config.getWiFiSSID();
   String password = config.getWiFiPassword();
@@ -71,6 +77,8 @@ normal_loop()
 void
 loop()
 {
+
+  display.showHappyFace();
   if (IN_CONFIG_MODE) {
     setup_loop();
   } else {

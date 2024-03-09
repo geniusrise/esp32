@@ -1,4 +1,5 @@
 #include "config.h"
+#include "nvs_flash.h"
 #include <Preferences.h>
 
 Preferences preferences; // Global preferences object for flash storage access
@@ -9,6 +10,17 @@ Preferences preferences; // Global preferences object for flash storage access
  */
 ConfigManager::ConfigManager()
 {
+
+  esp_err_t err_init = nvs_flash_init();
+  if (err_init == ESP_ERR_NVS_NO_FREE_PAGES ||
+      err_init == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    // NVS partition was truncated and needs to be erased
+    // Retry nvs_flash_init
+    ESP_ERROR_CHECK(nvs_flash_erase());
+    err_init = nvs_flash_init();
+  }
+  ESP_ERROR_CHECK(err_init);
+
   loadConfiguration(); // Load configuration on object creation
 }
 
