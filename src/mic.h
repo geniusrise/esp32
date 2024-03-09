@@ -1,20 +1,24 @@
-#ifndef MIC_MANAGER_H
-#define MIC_MANAGER_H
+#ifndef MIC_MANAGER_HPP
+#define MIC_MANAGER_HPP
 
-#include <driver/i2s.h>
+#include "AudioTools.h"
+#include <Arduino.h>
 
 class MicManager {
 public:
-  MicManager(int i2s_sck_pin, int i2s_ws_pin, int i2s_sd_pin);
+  MicManager();
   void begin();
-  void readAudioData(int16_t *buffer, size_t bufferSize, size_t &bytesRead);
-  void end();
+  void startRecording();
+  void stopRecording();
+  char *getRecordedAudio();
+  size_t getRecordedAudioSize();
 
 private:
-  int i2sSCKPin;
-  int i2sWSPin;
-  int i2sSDPin;
-  void setupI2S();
+  const int bufferSize = 1024;
+  AudioTools::I2SStream i2sStream;
+  AudioTools::MemoryStream memoryStream;
+  AudioTools::WAVEncoder wavEncoder;
+  AudioTools::GainControl gainControl;
 };
 
-#endif // MIC_MANAGER_H
+#endif // MIC_MANAGER_HPP
