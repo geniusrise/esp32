@@ -7,6 +7,8 @@
 #include "wifi.h"
 #include <Arduino.h>
 
+#define TOUCH_PIN 17
+
 ConfigManager config = ConfigManager();
 ServerManager server = ServerManager(config);
 WiFiManager wiFiManager = WiFiManager(config, server);
@@ -19,11 +21,13 @@ void
 setup()
 {
   // Initialize the state machine, which will also initialize all other managers
-  delay(5000);
+  delay(100);
 
   print_logo();
   display.begin();
-  // display.showHappyFace();
+  display.showHappyFace();
+
+  pinMode(TOUCH_PIN, INPUT);
 
   String ssid = config.getWiFiSSID();
   String password = config.getWiFiPassword();
@@ -64,6 +68,12 @@ setup_loop()
 void
 normal_loop()
 {
+  if (digitalRead(TOUCH_PIN) == HIGH) {
+    display.showSurprisedFace(); // If GPIO17 is HIGH, show the surprised face
+  } else {
+    display.showHappyFace(); // Otherwise, show the happy face
+  }
+
   color_printf(
     "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
   color_printf("Main: Start main loop, ip:");
@@ -77,8 +87,6 @@ normal_loop()
 void
 loop()
 {
-
-  display.showHappyFace();
   if (IN_CONFIG_MODE) {
     setup_loop();
   } else {

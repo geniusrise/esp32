@@ -119,7 +119,7 @@ WiFiManager::connectToNetwork(const char* ssid, const char* password)
     printf(".");
   }
 
-  printf("Connected to %s\n\n", &ssid);
+  printf("Connected to %s\n\n", ssid);
 
   return WiFi.status() == WL_CONNECTED;
 }
