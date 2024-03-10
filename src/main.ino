@@ -25,7 +25,7 @@ setup()
 
   print_logo();
   display.begin();
-  display.showHappyFace();
+  display.showEmotion("smiley");
 
   pinMode(TOUCH_PIN, INPUT);
 
@@ -69,9 +69,10 @@ void
 normal_loop()
 {
   if (digitalRead(TOUCH_PIN) == HIGH) {
-    display.showSurprisedFace(); // If GPIO17 is HIGH, show the surprised face
+    display.showEmotion(
+      "face_with_raised_eyebrow"); // If GPIO17 is HIGH, show the surprised face
   } else {
-    display.showHappyFace(); // Otherwise, show the happy face
+    display.showEmotion("smiley"); // Otherwise, show the happy face
   }
 
   color_printf(
