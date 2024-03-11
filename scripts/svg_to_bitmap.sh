@@ -16,10 +16,9 @@ for svg_file in "${SVG_DIR}"/*.svg; do
     echo "Converting ${svg_file}..."
     base_name=$(basename "${svg_file}" .svg)
     convert "${svg_file}" \
-        -background white \
         -distort SRT '1.2 0' \
         -resize 128x128 \
-        -unsharp 9x5.0+1.7+0 \
+        -unsharp 2x5.0+1.7+0 \
         -colors 256 \
         -flatten \
         "${OUTPUT_DIR}/${base_name}.png"

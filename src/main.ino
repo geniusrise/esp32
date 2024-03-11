@@ -8,6 +8,7 @@
 #include <Arduino.h>
 
 #define TOUCH_PIN 17
+#define MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND 2
 
 ConfigManager config = ConfigManager();
 ServerManager server = ServerManager(config);
@@ -16,6 +17,8 @@ Display display = Display();
 
 bool IN_CONFIG_MODE = false;
 String ipAddress;
+
+int touchPinPressedCycles = 0;
 
 void
 setup()
@@ -69,10 +72,17 @@ void
 normal_loop()
 {
   if (digitalRead(TOUCH_PIN) == HIGH) {
-    display.showEmotion(
-      "cowboy_hat_face"); // If GPIO17 is HIGH, show the surprised face
+    // If GPIO17 is HIGH, show the surprised face
+    touchPinPressedCycles += 1;
+    if (touchPinPressedCycles > MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
+      display.showEmotion("cowboy_hat_face");
+    }
   } else {
-    display.showEmotion("smiley"); // Otherwise, show the happy face
+    if (touchPinPressedCycles > 0) {
+      display.showEmotion("thinking_face");
+    } else {
+      display.showEmotion("smiley"); // Otherwise, show the happy face
+    }
   }
 
   color_printf(
