@@ -36,9 +36,9 @@ MicManager::MicManager(int bckPin, int wsPin, int dataPin)
 
   cfg.i2s_format = I2S_STD_FORMAT; // optional because default setting
   cfg.bits_per_sample = 32;
-  cfg.channels = 1; // optional because default setting
+  cfg.channels = 1;
   cfg.sample_rate = 16000;
-  cfg.is_master = true; // optional because default setting
+  cfg.is_master = true;
 
   cfg.pin_bck = _bckPin;
   cfg.pin_ws = _wsPin;
