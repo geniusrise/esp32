@@ -7,10 +7,6 @@
 #define CHANNELS (1)
 #define BITS_PER_SAMPLE (32)
 
-#define MAX_SECONDS_TO_BUFFER 5
-#define AUDIO_BUFFER_SIZE                                                      \
-  (MAX_SECONDS_TO_BUFFER * SAMPLE_RATE * CHANNELS * BITS_PER_SAMPLE / 8)
-
 #define PIN_AUDIO_KIT_SD_CARD_CS 13
 #define PIN_AUDIO_KIT_SD_CARD_MISO 2
 #define PIN_AUDIO_KIT_SD_CARD_MOSI 15
@@ -35,9 +31,9 @@ MicManager::MicManager(int bckPin, int wsPin, int dataPin)
   cfg = i2sStream.defaultConfig(RX_MODE);
 
   cfg.i2s_format = I2S_STD_FORMAT; // optional because default setting
-  cfg.bits_per_sample = 32;
-  cfg.channels = 1;
-  cfg.sample_rate = 16000;
+  cfg.bits_per_sample = BITS_PER_SAMPLE;
+  cfg.channels = CHANNELS;
+  cfg.sample_rate = SAMPLE_RATE;
   cfg.is_master = true;
 
   cfg.pin_bck = _bckPin;
