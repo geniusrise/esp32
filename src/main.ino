@@ -70,7 +70,7 @@ normal_loop()
 {
   if (digitalRead(TOUCH_PIN) == HIGH) {
     display.showEmotion(
-      "face_with_raised_eyebrow"); // If GPIO17 is HIGH, show the surprised face
+      "cowboy_hat_face"); // If GPIO17 is HIGH, show the surprised face
   } else {
     display.showEmotion("smiley"); // Otherwise, show the happy face
   }

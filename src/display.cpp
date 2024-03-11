@@ -113,8 +113,8 @@ Display::showEmotion(const String& emotion)
     bitmap = image_thinking_face;
     // } else if (emotion == "hugging_face") {
     //   bitmap = image_hugging_face;
-    // } else if (emotion == "cowboy_hat_face") {
-    //   bitmap = image_cowboy_hat_face;
+  } else if (emotion == "cowboy_hat_face") {
+    bitmap = image_cowboy_hat_face;
     // } else if (emotion == "nauseated_face") {
     //   bitmap = image_nauseated_face;
     // } else if (emotion == "rofl") {
