@@ -16,6 +16,11 @@
 #define PIN_MIC_WS 34
 #define PIN_MIC_DATA 16
 
+#define PIN_AUDIO_KIT_SD_CARD_CS 48
+#define PIN_AUDIO_KIT_SD_CARD_MOSI 37
+#define PIN_AUDIO_KIT_SD_CARD_CLK 36
+#define PIN_AUDIO_KIT_SD_CARD_MISO 35
+
 // Configuration
 ConfigManager config = ConfigManager();
 
@@ -28,7 +33,13 @@ WiFiManager wiFiManager = WiFiManager(config, server);
 
 // Peripherals
 Display display = Display();
-MicManager mic = MicManager(PIN_MIC_BCK, PIN_MIC_WS, PIN_MIC_DATA);
+MicManager mic = MicManager(PIN_MIC_BCK,
+                            PIN_MIC_WS,
+                            PIN_MIC_DATA,
+                            PIN_AUDIO_KIT_SD_CARD_CS,
+                            PIN_AUDIO_KIT_SD_CARD_MISO,
+                            PIN_AUDIO_KIT_SD_CARD_MOSI,
+                            PIN_AUDIO_KIT_SD_CARD_CLK);
 
 bool IN_CONFIG_MODE = false;
 String ipAddress;

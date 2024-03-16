@@ -4,11 +4,6 @@
 #define CHANNELS 1
 #define BITS_PER_SAMPLE 32
 
-#define PIN_AUDIO_KIT_SD_CARD_CS 48
-#define PIN_AUDIO_KIT_SD_CARD_MOSI 37
-#define PIN_AUDIO_KIT_SD_CARD_CLK 36
-#define PIN_AUDIO_KIT_SD_CARD_MISO 35
-
 // Source: mic over i2s
 I2SConfig cfg;
 I2SStream i2sStream;
@@ -19,10 +14,20 @@ File file;
 
 StreamCopy copier;
 
-MicManager::MicManager(int bckPin, int wsPin, int dataPin)
-  : _bckPin(bckPin)
-  , _wsPin(wsPin)
-  , _dataPin(dataPin)
+MicManager::MicManager(int bckPin,
+                       int wsPin,
+                       int dataPin,
+                       int sdCSPin,
+                       int sdMISOPin,
+                       int sdMOSIPin,
+                       int sdCLKPin)
+  : mic_BCK(bckPin)
+  , mic_WS(wsPin)
+  , mic_DATA(dataPin)
+  , sd_CS(sdCSPin)
+  , sd_MISO(sdMISOPin)
+  , sd_MOSI(sdMOSIPin)
+  , sd_CLK(sdCLKPin)
 {
   I2SStream i2sStream;
   cfg = i2sStream.defaultConfig(RX_MODE);
@@ -33,21 +38,18 @@ MicManager::MicManager(int bckPin, int wsPin, int dataPin)
   cfg.sample_rate = SAMPLE_RATE;
   cfg.is_master = true;
 
-  cfg.pin_bck = _bckPin;
-  cfg.pin_ws = _wsPin;
-  cfg.pin_data = _dataPin; // output
+  cfg.pin_bck = bckPin;
+  cfg.pin_ws = wsPin;
+  cfg.pin_data = dataPin; // output
+
+  sd_spi.begin(sdCLKPin, sdMISOPin, sdMOSIPin, sdCSPin);
 }
 
 void
 MicManager::startRecording(String fileName)
 {
 
-  sd_spi.begin(PIN_AUDIO_KIT_SD_CARD_CLK,
-               PIN_AUDIO_KIT_SD_CARD_MISO,
-               PIN_AUDIO_KIT_SD_CARD_MOSI,
-               PIN_AUDIO_KIT_SD_CARD_CS);
-
-  if (!SD.begin(PIN_AUDIO_KIT_SD_CARD_CS, sd_spi)) {
+  if (!SD.begin(sd_CS, sd_spi)) {
     printf("SD card failed to initialize");
     return;
   }

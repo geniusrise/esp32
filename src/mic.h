@@ -11,13 +11,20 @@ using AudioBufferCallback = void (*)(void);
 class MicManager
 {
 public:
-  explicit MicManager(int bckPin, int wsPin, int dataPin);
+  explicit MicManager(int bckPin,
+                      int wsPin,
+                      int dataPin,
+                      int sdCSPin,
+                      int sdMISOPin,
+                      int sdMOSIPin,
+                      int sdCLKPin);
   void startRecording(String fileName);
   void stopRecording();
   void record();
 
 private:
-  int _bckPin, _wsPin, _dataPin;
+  int mic_BCK, mic_WS, mic_DATA;
+  int sd_CS, sd_MISO, sd_MOSI, sd_CLK;
 };
 
 #endif // MIC_MANAGER_HPP
