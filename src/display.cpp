@@ -25,8 +25,10 @@ Display::showEmotion(const String& emotion)
 {
   const unsigned short* bitmap = nullptr;
 
-  if (emotion == "grinning") {
-    bitmap = image_grinning;
+  if (!emotion) {
+    bitmap = image_smiley;
+    // } else if (emotion == "grinning") {
+    //   bitmap = image_grinning;
     // } else if (emotion == "grin") {
     //   bitmap = image_grin;
     // } else if (emotion == "joy") {
@@ -123,8 +125,8 @@ Display::showEmotion(const String& emotion)
     //   bitmap = image_drooling_face;
     // } else if (emotion == "sneezing_face") {
     //   bitmap = image_sneezing_face;
-  } else if (emotion == "face_with_raised_eyebrow") {
-    bitmap = image_face_with_raised_eyebrow;
+    // } else if (emotion == "face_with_raised_eyebrow") {
+    //   bitmap = image_face_with_raised_eyebrow;
     // } else if (emotion == "starstruck") {
     //   bitmap = image_starstruck;
   }

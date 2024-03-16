@@ -11,7 +11,7 @@ using AudioBufferCallback = void (*)(void);
 class MicManager
 {
 public:
-  MicManager(int bckPin, int wsPin, int dataPin);
+  explicit MicManager(int bckPin, int wsPin, int dataPin);
   void startRecording(String fileName);
   void stopRecording();
 
@@ -20,11 +20,6 @@ public:
 private:
   int _bckPin, _wsPin, _dataPin;
   bool _isRecording;
-
-  I2SStream i2sStream;
-  I2SConfig cfg;
-  StreamCopy copier;
-  File file;
 
   void audioTask();
 };

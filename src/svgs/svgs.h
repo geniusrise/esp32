@@ -1,5 +1,5 @@
 // Master header file including all bitmap headers
-#include "1F600.h"
+// #include "1F600.h"
 // #include "1F601.h"
 // #include "1F602.h"
 // #include "1F603.h"
@@ -51,7 +51,7 @@
 #include "1F928.h"
 // #include "1F929.h"
 
-const unsigned short* image_grinning = image_1F600;
+// const unsigned short* image_grinning = image_1F600;
 // const unsigned short* image_grin = image_1F601;
 // const unsigned short* image_joy = image_1F602;
 // const unsigned short* image_smiley = image_1F603;

@@ -1,19 +1,34 @@
 #include "config.h"
 #include "display.h"
 #include "driver/gpio.h"
+#include "mic.h"
 #include "server.h"
 #include "speaker.h"
 #include "util.h"
 #include "wifi.h"
 #include <Arduino.h>
+#include <NTPClient.h>
 
 #define TOUCH_PIN 17
 #define MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND 2
 
+#define PIN_MIC_BCK 33
+#define PIN_MIC_WS 34
+#define PIN_MIC_DATA 16
+
+// Configuration
 ConfigManager config = ConfigManager();
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", 3600, 60000);
+
+// Setup
 ServerManager server = ServerManager(config);
 WiFiManager wiFiManager = WiFiManager(config, server);
+
+// Peripherals
 Display display = Display();
+MicManager mic = MicManager(PIN_MIC_BCK, PIN_MIC_WS, PIN_MIC_DATA);
 
 bool IN_CONFIG_MODE = false;
 String ipAddress;
@@ -23,7 +38,6 @@ int touchPinPressedCycles = 0;
 void
 setup()
 {
-  // Initialize the state machine, which will also initialize all other managers
   delay(100);
 
   print_logo();
@@ -42,6 +56,13 @@ setup()
   } else {
     wiFiManager.connectToSavedNetwork(ssid.c_str(),
                                       config.getWiFiPassword().c_str());
+
+    timeClient.setPoolServerName("pool.ntp.org");
+    timeClient.begin();
+    while (!timeClient.update()) {
+      timeClient.forceUpdate();
+    }
+
     server.begin();
     ipAddress = wiFiManager.getIPAddress().toString();
   }
@@ -64,24 +85,32 @@ normal_loop()
   if (digitalRead(TOUCH_PIN) == HIGH) {
     // If GPIO17 is HIGH, show the surprised face
     touchPinPressedCycles += 1;
-    if (touchPinPressedCycles > MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
+    if (touchPinPressedCycles == MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
+
+      printf("Start: Listening to user via mic\n");
       display.showEmotion("cowboy_hat_face");
+
+      // Prepare filename
+      String now = timeClient.getFormattedTime();
+      now.replace(":", "-");
+      int randomPart = random(1000, 9999);
+
+      mic.startRecording("/" + now + "--" + randomPart + ".mp3");
     }
+
   } else {
     if (touchPinPressedCycles > 0) {
+      touchPinPressedCycles = 0;
+
+      printf("Stop: Listening to user via mic\n");
       display.showEmotion("thinking_face");
+      mic.stopRecording();
+
     } else {
       display.showEmotion("smiley"); // Otherwise, show the happy face
     }
   }
 
-  color_printf(
-    "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
-  color_printf("Main: Start main loop, ip:");
-  printf("%s\n", ipAddress.c_str());
-
-  color_printf(
-    "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
   delay(500);
 }
 
