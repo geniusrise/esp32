@@ -26,8 +26,6 @@ private:
   StreamCopy copier;
   File file;
 
-  // void initializeI2S();
-  // void deinitializeI2S();
   void audioTask();
 };
 

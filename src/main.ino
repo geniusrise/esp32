@@ -56,16 +56,6 @@ setup_loop()
                "hellogenius, then visit http://192.168.218.1\n");
   color_printf(
     "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
-
-  // String ssid = config.getWiFiSSID();
-  // String password = config.getWiFiPassword();
-  // if (ssid != "") {
-  //     color_printf("Going into AP mode for setup......");
-  //     IN_CONFIG_MODE = false;
-  //     wiFiManager.connectToSavedNetwork(ssid.c_str(), password.c_str());
-  //     server.begin();
-  //     ipAddress = wiFiManager.getIPAddress().toString();
-  // }
 }
 
 void

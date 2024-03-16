@@ -21,6 +21,10 @@ print_logo()
 void
 color_printf(const char* format, ...)
 {
+#ifdef PRODUCTION
+  return;
+#endif
+
   va_list args;
   va_start(args, format);
 
