@@ -57,7 +57,6 @@ setup()
     wiFiManager.connectToSavedNetwork(ssid.c_str(),
                                       config.getWiFiPassword().c_str());
 
-    timeClient.setPoolServerName("pool.ntp.org");
     timeClient.begin();
     while (!timeClient.update()) {
       timeClient.forceUpdate();
@@ -87,15 +86,17 @@ normal_loop()
     touchPinPressedCycles += 1;
     if (touchPinPressedCycles == MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
 
-      printf("Start: Listening to user via mic\n");
       display.showEmotion("cowboy_hat_face");
+      printf("Start: Listening to user via mic\n");
 
       // Prepare filename
       String now = timeClient.getFormattedTime();
       now.replace(":", "-");
       int randomPart = random(1000, 9999);
 
-      mic.startRecording("/" + now + "--" + randomPart + ".mp3");
+      mic.startRecording("/" + now + "--" + randomPart + ".audio");
+    } else if (touchPinPressedCycles > MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
+      mic.record();
     }
 
   } else {

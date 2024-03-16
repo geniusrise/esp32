@@ -14,14 +14,10 @@ public:
   explicit MicManager(int bckPin, int wsPin, int dataPin);
   void startRecording(String fileName);
   void stopRecording();
-
-  static void audioTaskWrapper(void* param);
+  void record();
 
 private:
   int _bckPin, _wsPin, _dataPin;
-  bool _isRecording;
-
-  void audioTask();
 };
 
 #endif // MIC_MANAGER_HPP
