@@ -4,10 +4,6 @@
 #define CHANNELS 1
 #define BITS_PER_SAMPLE 32
 
-// Source: SD card over i2c
-SPIClass sd_spi;
-File file;
-
 // Destination: PCM out via one wire to AMP -> speakers
 #define PIN_AMP_LEFT_CHANNEL 10
 #define PIN_AMP_RIGHT_CHANNEL 11

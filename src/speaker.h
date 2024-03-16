@@ -2,8 +2,8 @@
 #ifndef SPEAKER_H
 #define SPEAKER_H
 
-#include "AudioLibs/AudioSourceSD.h"
 #include "AudioTools.h"
+#include "SD.h"
 
 class Speaker
 {
@@ -14,6 +14,8 @@ public:
 
 private:
   int sd_CS, sd_MISO, sd_MOSI, sd_CLK;
+  SPIClass sd_spi;
+  File file;
 };
 
 #endif // SPEAKER_H
