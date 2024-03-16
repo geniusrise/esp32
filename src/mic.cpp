@@ -32,7 +32,7 @@ MicManager::MicManager(int bckPin,
   I2SStream i2sStream;
   cfg = i2sStream.defaultConfig(RX_MODE);
 
-  cfg.i2s_format = I2S_STD_FORMAT; // optional because default setting
+  cfg.i2s_format = I2S_STD_FORMAT;
   cfg.bits_per_sample = BITS_PER_SAMPLE;
   cfg.channels = CHANNELS;
   cfg.sample_rate = SAMPLE_RATE;
@@ -56,7 +56,9 @@ MicManager::startRecording(String fileName)
 
   file = SD.open(fileName, FILE_WRITE);
   file.seek(0);
+
   copier.setCheckAvailableForWrite(false);
+
   i2sStream.begin(cfg);
   copier.begin(file, i2sStream);
 }

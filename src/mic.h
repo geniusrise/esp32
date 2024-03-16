@@ -19,8 +19,8 @@ public:
                       int sdMOSIPin,
                       int sdCLKPin);
   void startRecording(String fileName);
-  void stopRecording();
   void record();
+  void stopRecording();
 
 private:
   int mic_BCK, mic_WS, mic_DATA;
