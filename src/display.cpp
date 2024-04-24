@@ -1,7 +1,4 @@
 #include "display.h"
-// #include "svgs/svgs.h"
-
-// Add more as needed, with appropriate external declarations
 
 // Assuming dimensions for simplicity
 #define BITMAP_WIDTH 128
@@ -17,140 +14,61 @@ Display::begin()
 {
   tft.init();
   tft.setRotation(2);
-  tft.fillScreen(TFT_WHITE); // Start with a black screen
+  tft.fillScreen(TFT_WHITE); // Start with a white screen
+
+  // Initialize SD card
+  if (!SD.begin()) {
+    Serial.println("SD card initialization failed!");
+    return;
+  }
 }
 
 bool
 Display::showEmotion(const String& emotion)
 {
-  const unsigned short* bitmap = nullptr;
-  return true;
+  String fileName = emotion + ".bmp";
 
-  // if (!emotion) {
-  //   bitmap = image_smiley;
-  //   // } else if (emotion == "grinning") {
-  //   //   bitmap = image_grinning;
-  //   // } else if (emotion == "grin") {
-  //   //   bitmap = image_grin;
-  //   // } else if (emotion == "joy") {
-  //   //   bitmap = image_joy;
-  // } else if (emotion == "smiley") {
-  //   bitmap = image_smiley;
-  //   // } else if (emotion == "smile") {
-  //   //   bitmap = image_smile;
-  //   // } else if (emotion == "sweat_smile") {
-  //   //   bitmap = image_sweat_smile;
-  //   // } else if (emotion == "laughing") {
-  //   //   bitmap = image_laughing;
-  //   // } else if (emotion == "innocent") {
-  //   //   bitmap = image_innocent;
-  //   // } else if (emotion == "wink") {
-  //   //   bitmap = image_wink;
-  //   // } else if (emotion == "neutral_face") {
-  //   //   bitmap = image_neutral_face;
-  //   // } else if (emotion == "expressionless") {
-  //   //   bitmap = image_expressionless;
-  //   // } else if (emotion == "unamused") {
-  //   //   bitmap = image_unamused;
-  //   // } else if (emotion == "sweat") {
-  //   //   bitmap = image_sweat;
-  //   // } else if (emotion == "pensive") {
-  //   //   bitmap = image_pensive;
-  //   // } else if (emotion == "confused") {
-  //   //   bitmap = image_confused;
-  //   // } else if (emotion == "confounded") {
-  //   //   bitmap = image_confounded;
-  //   // } else if (emotion == "kissing") {
-  //   //   bitmap = image_kissing;
-  //   // } else if (emotion == "kissing_heart") {
-  //   //   bitmap = image_kissing_heart;
-  //   // } else if (emotion == "kissing_smiling_eyes") {
-  //   //   bitmap = image_kissing_smiling_eyes;
-  //   // } else if (emotion == "angry") {
-  //   //   bitmap = image_angry;
-  //   // } else if (emotion == "cry") {
-  //   //   bitmap = image_cry;
-  //   // } else if (emotion == "persevere") {
-  //   //   bitmap = image_persevere;
-  //   // } else if (emotion == "triumph") {
-  //   //   bitmap = image_triumph;
-  //   // } else if (emotion == "disappointed_relieved") {
-  //   //   bitmap = image_disappointed_relieved;
-  //   // } else if (emotion == "frowning") {
-  //   //   bitmap = image_frowning;
-  //   // } else if (emotion == "anguished") {
-  //   //   bitmap = image_anguished;
-  //   // } else if (emotion == "fearful") {
-  //   //   bitmap = image_fearful;
-  //   // } else if (emotion == "weary") {
-  //   //   bitmap = image_weary;
-  //   // } else if (emotion == "cold_sweat") {
-  //   //   bitmap = image_cold_sweat;
-  //   // } else if (emotion == "scream") {
-  //   //   bitmap = image_scream;
-  //   // } else if (emotion == "astonished") {
-  //   //   bitmap = image_astonished;
-  //   // } else if (emotion == "flushed") {
-  //   //   bitmap = image_flushed;
-  //   // } else if (emotion == "sleeping") {
-  //   //   bitmap = image_sleeping;
-  //   // } else if (emotion == "dizzy_face") {
-  //   //   bitmap = image_dizzy_face;
-  //   // } else if (emotion == "dizzy_face") {
-  //   //   bitmap = image_dizzy_face;
-  //   // } else if (emotion == "mask") {
-  //   //   bitmap = image_mask;
-  //   // } else if (emotion == "slightly_frowning_face") {
-  //   //   bitmap = image_slightly_frowning_face;
-  //   // } else if (emotion == "slightly_smiling_face") {
-  //   //   bitmap = image_slightly_smiling_face;
-  //   // } else if (emotion == "face_with_rolling_eyes") {
-  //   //   bitmap = image_face_with_rolling_eyes;
-  //   // } else if (emotion == "zipper_mouth_face") {
-  //   //   bitmap = image_zipper_mouth_face;
-  //   // } else if (emotion == "money_mouth_face") {
-  //   //   bitmap = image_money_mouth_face;
-  //   // } else if (emotion == "nerd_face") {
-  //   //   bitmap = image_nerd_face;
-  // } else if (emotion == "thinking_face") {
-  //   bitmap = image_thinking_face;
-  //   // } else if (emotion == "hugging_face") {
-  //   //   bitmap = image_hugging_face;
-  // } else if (emotion == "cowboy_hat_face") {
-  //   bitmap = image_cowboy_hat_face;
-  //   // } else if (emotion == "nauseated_face") {
-  //   //   bitmap = image_nauseated_face;
-  //   // } else if (emotion == "rofl") {
-  //   //   bitmap = image_rofl;
-  //   // } else if (emotion == "drooling_face") {
-  //   //   bitmap = image_drooling_face;
-  //   // } else if (emotion == "sneezing_face") {
-  //   //   bitmap = image_sneezing_face;
-  //   // } else if (emotion == "face_with_raised_eyebrow") {
-  //   //   bitmap = image_face_with_raised_eyebrow;
-  //   // } else if (emotion == "starstruck") {
-  //   //   bitmap = image_starstruck;
-  // }
+  if (SD.exists(fileName)) {
+    File bitmapFile = SD.open(fileName, FILE_READ);
+    if (bitmapFile) {
+      displayBitmap(bitmapFile);
+      bitmapFile.close();
+      return true;
+    } else {
+      Serial.println("Failed to open bitmap file: " + fileName);
+    }
+  } else {
+    Serial.println("Bitmap file not found: " + fileName);
+  }
 
-  // if (bitmap != nullptr) {
-  //   displayBitmap(bitmap, 0, 0, BITMAP_WIDTH, BITMAP_HEIGHT);
-  //   return true;
-  // } else {
-  //   // Emotion not found, you could clear the display or leave as is.
-  //   // tft.fillScreen(TFT_BLACK); // Optional: clear screen if emotion not
-  //   found return false;
-  // }
+  return false;
 }
 
 void
-Display::displayBitmap(const unsigned short* bitmap, int x, int y, int w, int h)
+Display::displayBitmap(File& bitmapFile)
 {
+  // Read the bitmap header
+  char header[54];
+  bitmapFile.read((uint8_t*)header, 54);
 
-  tft.setSwapBytes(false);
-  tft.invertDisplay(1);
+  // Get the image dimensions
+  uint32_t width = *((uint32_t*)&header[18]);
+  uint32_t height = *((uint32_t*)&header[22]);
 
-  tft.startWrite(); // Begin write operation
-  // tft.setAddrWindow(x, y, w, h);
-  tft.pushImage(0, 0, 128, 128, bitmap);
-  tft.endWrite(); // End write operation
+  // Prepare the TFT display
+  tft.startWrite();
+  tft.setAddrWindow(0, 0, width, height);
+
+  // Read and display the bitmap pixels
+  uint8_t buffer[BITMAP_WIDTH * 2]; // Adjust buffer size based on bitmap width
+  uint16_t color;
+  uint32_t pixelCount = width * height;
+
+  while (pixelCount--) {
+    bitmapFile.read(&buffer[0], 2);
+    color = ((buffer[1] << 8) | buffer[0]);
+    tft.pushColor(color);
+  }
+
+  tft.endWrite();
 }
