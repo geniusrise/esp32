@@ -1,10 +1,13 @@
-#ifndef MIC_MANAGER_HPP
-#define MIC_MANAGER_HPP
+#ifndef MIC_HPP
+#define MIC_HPP
 
 #include "AudioTools.h"
 #include "SD.h"
 #include "driver/i2s.h"
 #include <Arduino.h>
+
+#include "AudioCodecs/AudioEncoded.h"
+#include "AudioCodecs/CodecMP3LAME.h"
 
 using AudioBufferCallback = void (*)(void);
 
@@ -27,4 +30,4 @@ private:
   int sd_CS, sd_MISO, sd_MOSI, sd_CLK;
 };
 
-#endif // MIC_MANAGER_HPP
+#endif // MIC_HPP

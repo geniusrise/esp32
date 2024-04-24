@@ -105,7 +105,7 @@ normal_loop()
       now.replace(":", "-");
       int randomPart = random(1000, 9999);
 
-      mic.startRecording("/" + now + "--" + randomPart + ".audio");
+      mic.startRecording("/" + now + "--" + randomPart + ".mp3");
     } else if (touchPinPressedCycles > MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
       mic.record();
     }
