@@ -33,7 +33,10 @@ ServerManager server = ServerManager(config);
 WiFiManager wiFiManager = WiFiManager(config, server);
 
 // Peripherals
-Display display = Display();
+Display display = Display(PIN_AUDIO_KIT_SD_CARD_CS,
+                          PIN_AUDIO_KIT_SD_CARD_MISO,
+                          PIN_AUDIO_KIT_SD_CARD_MOSI,
+                          PIN_AUDIO_KIT_SD_CARD_CLK);
 MicManager mic = MicManager(PIN_MIC_BCK,
                             PIN_MIC_WS,
                             PIN_MIC_DATA,
@@ -66,7 +69,7 @@ setup()
   if (ssid == "") {
     color_printf("Going into AP mode for setup......");
     IN_CONFIG_MODE = true;
-    wiFiManager.setupAPMode("geniusrise", "hellogenius");
+    wiFiManager.setupAPMode("geniusrise", "geniusrise");
 
   } else {
     wiFiManager.connectToSavedNetwork(ssid.c_str(),
@@ -138,7 +141,7 @@ normal_loop()
     }
   }
 
-  // delay(500);
+  delay(500);
 }
 
 void

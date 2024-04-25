@@ -4,7 +4,11 @@
 #define BITMAP_WIDTH 128
 #define BITMAP_HEIGHT 128
 
-Display::Display()
+Display::Display(int sdCSPin, int sdMISOPin, int sdMOSIPin, int sdCLKPin)
+  : sd_CS(sdCSPin)
+  , sd_MISO(sdMISOPin)
+  , sd_MOSI(sdMOSIPin)
+  , sd_CLK(sdCLKPin)
 {
   // Constructor body if needed
 }
@@ -17,6 +21,7 @@ Display::begin()
   tft.fillScreen(TFT_WHITE); // Start with a white screen
 
   // Initialize SD card
+  sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI, sd_CS);
   if (!SD.begin()) {
     Serial.println("SD card initialization failed!");
     return;

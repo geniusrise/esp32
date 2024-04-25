@@ -12,13 +12,19 @@
 class Display
 {
 public:
-  Display();    // Constructor to initialize the display
-  void begin(); // Initialize the TFT display
+  Display(int sdCSPin,
+          int sdMISOPin,
+          int sdMOSIPin,
+          int sdCLKPin); // Constructor to initialize the display
+  void begin();          // Initialize the TFT display
 
   // Function to display an emotion if it exists
   bool showEmotion(const String& emotion);
 
 private:
+  int sd_CS, sd_MISO, sd_MOSI, sd_CLK;
+  SPIClass sd_spi;
+
   TFT_eSPI tft = TFT_eSPI(); // Create a TFT_eSPI object
 
   // Function to display a bitmap

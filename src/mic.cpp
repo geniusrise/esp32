@@ -8,8 +8,6 @@
 I2SConfig cfg;
 I2SStream i2sStream;
 
-// Destination: SD card over i2c
-SPIClass sd_spi;
 File file;
 
 // EncodedAudioStream encoder(&file, new MP3EncoderLAME());

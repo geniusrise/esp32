@@ -28,6 +28,7 @@ public:
 private:
   int mic_BCK, mic_WS, mic_DATA;
   int sd_CS, sd_MISO, sd_MOSI, sd_CLK;
+  SPIClass sd_spi;
 };
 
 #endif // MIC_HPP
