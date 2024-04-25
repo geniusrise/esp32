@@ -12,7 +12,7 @@ I2SStream i2sStream;
 SPIClass sd_spi;
 File file;
 
-EncodedAudioStream encoder(&file, new MP3EncoderLAME());
+// EncodedAudioStream encoder(&file, new MP3EncoderLAME());
 StreamCopy copier;
 
 MicManager::MicManager(int bckPin,
@@ -61,7 +61,7 @@ MicManager::startRecording(String fileName)
   copier.setCheckAvailableForWrite(false);
 
   i2sStream.begin(cfg);
-  copier.begin(encoder, i2sStream);
+  copier.begin(file, i2sStream);
 }
 
 void

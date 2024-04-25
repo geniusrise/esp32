@@ -2,6 +2,7 @@
 #include "display.h"
 #include "driver/gpio.h"
 #include "mic.h"
+#include "openai.h"
 #include "server.h"
 #include "speaker.h"
 #include "util.h"
@@ -45,6 +46,9 @@ bool IN_CONFIG_MODE = false;
 String ipAddress;
 
 int touchPinPressedCycles = 0;
+String current_filename;
+
+#define OPENAI_KEY "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"
 
 void
 setup()
@@ -87,6 +91,8 @@ setup_loop()
                "hellogenius, then visit http://192.168.218.1\n");
   color_printf(
     "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
+
+  delay(1000);
 }
 
 void
@@ -105,7 +111,8 @@ normal_loop()
       now.replace(":", "-");
       int randomPart = random(1000, 9999);
 
-      mic.startRecording("/" + now + "--" + randomPart + ".mp3");
+      current_filename = "/" + now + "--" + randomPart + ".mp3";
+      mic.startRecording(current_filename);
     } else if (touchPinPressedCycles > MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
       mic.record();
     }
@@ -118,12 +125,20 @@ normal_loop()
       display.showEmotion("thinking_face");
       mic.stopRecording();
 
+      // call speech to text API
+      OpenAI openai(OPENAI_KEY);
+      String response =
+        openai.createTranscription(current_filename.c_str(), "whisper-1");
+
+      // then call the LLM
+
+      // finally call text to speech API
     } else {
       display.showEmotion("smiley"); // Otherwise, show the happy face
     }
   }
 
-  delay(500);
+  // delay(500);
 }
 
 void

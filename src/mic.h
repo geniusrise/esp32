@@ -7,7 +7,7 @@
 #include <Arduino.h>
 
 #include "AudioCodecs/AudioEncoded.h"
-#include "AudioCodecs/CodecMP3LAME.h"
+// #include "AudioCodecs/CodecMP3LAME.h"
 
 using AudioBufferCallback = void (*)(void);
 

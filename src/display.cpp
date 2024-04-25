@@ -26,7 +26,7 @@ Display::begin()
 bool
 Display::showEmotion(const String& emotion)
 {
-  String fileName = emotion + ".bmp";
+  String fileName = "emojis/" + emotion + ".bmp";
 
   if (SD.exists(fileName)) {
     File bitmapFile = SD.open(fileName, FILE_READ);
