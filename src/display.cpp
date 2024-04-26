@@ -18,9 +18,10 @@ Display::begin()
 }
 
 bool
-Display::showEmotion(const String& emotion)
+Display::showEmotion(const char* emotion)
 {
-  String fileName = "emojis/" + emotion + ".bmp";
+  char* fileName = (char*)malloc(1024 * sizeof(char));
+  sprintf(fileName, "emojis/%s.svg", emotion);
 
   // if (SD.exists(fileName)) {
   //   File bitmapFile = SD.open(fileName, FILE_READ);

@@ -67,7 +67,7 @@ setup()
 
   print_logo();
   display.begin();
-  display.showEmotion("smiley");
+  display.showEmotion(image_smiley.c_str());
 
   pinMode(TOUCH_PIN, INPUT);
 
@@ -114,7 +114,7 @@ normal_loop()
     touchPinPressedCycles += 1;
     if (touchPinPressedCycles == MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
 
-      display.showEmotion("cowboy_hat_face");
+      display.showEmotion(image_cowboy_hat_face.c_str());
       printf("Start: Listening to user via mic\n");
 
       // Prepare filename
@@ -133,7 +133,7 @@ normal_loop()
       touchPinPressedCycles = 0;
 
       printf("Stop: Listening to user via mic\n");
-      display.showEmotion("thinking_face");
+      display.showEmotion(image_thinking_face.c_str());
       mic.stopRecording();
 
       // call speech to text API
@@ -145,7 +145,8 @@ normal_loop()
 
       // finally call text to speech API
     } else {
-      display.showEmotion("smiley"); // Otherwise, show the happy face
+      display.showEmotion(
+        image_smiley.c_str()); // Otherwise, show the happy face
     }
   }
 
