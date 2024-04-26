@@ -3,8 +3,9 @@
 
 #include "AudioTools.h"
 #include "driver/i2s.h"
-#include "sd.h"
 #include <Arduino.h>
+#include <FS.h>
+#include <SD.h>
 
 #include "AudioCodecs/AudioEncoded.h"
 // #include "AudioCodecs/CodecMP3LAME.h"

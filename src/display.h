@@ -1,9 +1,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "sd.h"
 #include <Arduino.h>
 #include <FS.h>
+#include <SD.h>
 #include <TFT_eSPI.h> // Include the graphics library for the ST7735 driver chip
 
 #define TFT_WIDTH 128

@@ -8,7 +8,7 @@
 I2SConfig cfg;
 I2SStream i2sStream;
 
-File file;
+File input_audio_file;
 
 // EncodedAudioStream encoder(&file, new MP3EncoderLAME());
 StreamCopy copier;
@@ -35,13 +35,13 @@ MicManager::MicManager(int bckPin, int wsPin, int dataPin)
 void
 MicManager::startRecording(String fileName)
 {
-  file = SD.open(fileName, FILE_WRITE);
-  file.seek(0);
+  input_audio_file = SD.open(fileName, FILE_WRITE);
+  input_audio_file.seek(0);
 
   copier.setCheckAvailableForWrite(false);
 
   i2sStream.begin(cfg);
-  copier.begin(file, i2sStream);
+  copier.begin(input_audio_file, i2sStream);
 }
 
 void
@@ -55,5 +55,5 @@ MicManager::stopRecording()
 {
   copier.end();
   i2sStream.end();
-  file.close();
+  input_audio_file.close();
 }
