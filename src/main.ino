@@ -3,6 +3,7 @@
 #include "driver/gpio.h"
 #include "mic.h"
 #include "openai.h"
+#include "sd.h"
 #include "server.h"
 #include "speaker.h"
 #include "util.h"
@@ -33,17 +34,12 @@ ServerManager server = ServerManager(config);
 WiFiManager wiFiManager = WiFiManager(config, server);
 
 // Peripherals
-Display display = Display(PIN_AUDIO_KIT_SD_CARD_CS,
-                          PIN_AUDIO_KIT_SD_CARD_MISO,
-                          PIN_AUDIO_KIT_SD_CARD_MOSI,
-                          PIN_AUDIO_KIT_SD_CARD_CLK);
-MicManager mic = MicManager(PIN_MIC_BCK,
-                            PIN_MIC_WS,
-                            PIN_MIC_DATA,
-                            PIN_AUDIO_KIT_SD_CARD_CS,
-                            PIN_AUDIO_KIT_SD_CARD_MISO,
-                            PIN_AUDIO_KIT_SD_CARD_MOSI,
-                            PIN_AUDIO_KIT_SD_CARD_CLK);
+SDCard sd = SDCard(PIN_AUDIO_KIT_SD_CARD_CS,
+                   PIN_AUDIO_KIT_SD_CARD_MISO,
+                   PIN_AUDIO_KIT_SD_CARD_MOSI,
+                   PIN_AUDIO_KIT_SD_CARD_CLK);
+Display display = Display();
+MicManager mic = MicManager(PIN_MIC_BCK, PIN_MIC_WS, PIN_MIC_DATA);
 
 bool IN_CONFIG_MODE = false;
 String ipAddress;

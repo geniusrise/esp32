@@ -1,9 +1,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include "sd.h"
 #include <Arduino.h>
 #include <FS.h>
-#include <SD.h>
 #include <TFT_eSPI.h> // Include the graphics library for the ST7735 driver chip
 
 #define TFT_WIDTH 128
@@ -12,19 +12,13 @@
 class Display
 {
 public:
-  Display(int sdCSPin,
-          int sdMISOPin,
-          int sdMOSIPin,
-          int sdCLKPin); // Constructor to initialize the display
-  void begin();          // Initialize the TFT display
+  Display();    // Constructor to initialize the display
+  void begin(); // Initialize the TFT display
 
   // Function to display an emotion if it exists
   bool showEmotion(const String& emotion);
 
 private:
-  int sd_CS, sd_MISO, sd_MOSI, sd_CLK;
-  SPIClass sd_spi;
-
   TFT_eSPI tft = TFT_eSPI(); // Create a TFT_eSPI object
 
   // Function to display a bitmap

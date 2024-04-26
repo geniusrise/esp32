@@ -13,20 +13,10 @@ File file;
 // EncodedAudioStream encoder(&file, new MP3EncoderLAME());
 StreamCopy copier;
 
-MicManager::MicManager(int bckPin,
-                       int wsPin,
-                       int dataPin,
-                       int sdCSPin,
-                       int sdMISOPin,
-                       int sdMOSIPin,
-                       int sdCLKPin)
+MicManager::MicManager(int bckPin, int wsPin, int dataPin)
   : mic_BCK(bckPin)
   , mic_WS(wsPin)
   , mic_DATA(dataPin)
-  , sd_CS(sdCSPin)
-  , sd_MISO(sdMISOPin)
-  , sd_MOSI(sdMOSIPin)
-  , sd_CLK(sdCLKPin)
 {
   I2SStream i2sStream;
   cfg = i2sStream.defaultConfig(RX_MODE);
@@ -45,14 +35,6 @@ MicManager::MicManager(int bckPin,
 void
 MicManager::startRecording(String fileName)
 {
-
-  sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI, sd_CS);
-
-  if (!SD.begin(sd_CS, sd_spi)) {
-    printf("SD card failed to initialize");
-    return;
-  }
-
   file = SD.open(fileName, FILE_WRITE);
   file.seek(0);
 

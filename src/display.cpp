@@ -4,11 +4,7 @@
 #define BITMAP_WIDTH 128
 #define BITMAP_HEIGHT 128
 
-Display::Display(int sdCSPin, int sdMISOPin, int sdMOSIPin, int sdCLKPin)
-  : sd_CS(sdCSPin)
-  , sd_MISO(sdMISOPin)
-  , sd_MOSI(sdMOSIPin)
-  , sd_CLK(sdCLKPin)
+Display::Display()
 {
   // Constructor body if needed
 }
@@ -19,13 +15,6 @@ Display::begin()
   tft.init();
   tft.setRotation(2);
   tft.fillScreen(TFT_WHITE); // Start with a white screen
-
-  // Initialize SD card
-  sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI, sd_CS);
-  if (!SD.begin()) {
-    Serial.println("SD card initialization failed!");
-    return;
-  }
 }
 
 bool
@@ -33,18 +22,18 @@ Display::showEmotion(const String& emotion)
 {
   String fileName = "emojis/" + emotion + ".bmp";
 
-  if (SD.exists(fileName)) {
-    File bitmapFile = SD.open(fileName, FILE_READ);
-    if (bitmapFile) {
-      displayBitmap(bitmapFile);
-      bitmapFile.close();
-      return true;
-    } else {
-      Serial.println("Failed to open bitmap file: " + fileName);
-    }
-  } else {
-    Serial.println("Bitmap file not found: " + fileName);
-  }
+  // if (SD.exists(fileName)) {
+  //   File bitmapFile = SD.open(fileName, FILE_READ);
+  //   if (bitmapFile) {
+  //     displayBitmap(bitmapFile);
+  //     bitmapFile.close();
+  //     return true;
+  //   } else {
+  //     Serial.println("Failed to open bitmap file: " + fileName);
+  //   }
+  // } else {
+  //   Serial.println("Bitmap file not found: " + fileName);
+  // }
 
   return false;
 }
