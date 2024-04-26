@@ -11,7 +11,7 @@ public:
   SDCard(int sdCSPin, int sdMISOPin, int sdMOSIPin, int sdCLKPin)
   {
     sd_CS = sdCSPin;
-    sd_MISO = sdCSPin;
+    sd_MISO = sdMISOPin;
     sd_MOSI = sdMOSIPin;
     sd_CLK = sdCLKPin;
   } // Constructor to initialize the SD Card
