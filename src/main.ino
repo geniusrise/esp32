@@ -145,8 +145,9 @@ normal_loop()
 
       // finally call text to speech API
     } else {
-      display.showEmotion(
-        image_smiley.c_str()); // Otherwise, show the happy face
+      // Otherwise, show the happy face
+      printf(".");
+      display.showEmotion(image_smiley.c_str());
     }
   }
 

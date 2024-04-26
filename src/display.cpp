@@ -20,20 +20,24 @@ Display::begin()
 bool
 Display::showEmotion(const char* emotion)
 {
-  char* fileName = (char*)malloc(1024 * sizeof(char));
-  sprintf(fileName, "emojis/%s.svg", emotion);
+  char* fileName = (char*)malloc((strlen(emotion) + 7 + 1) * sizeof(char));
+  sprintf(fileName, "/%s.svg.bmp", emotion);
 
-  // if (SD.exists(fileName)) {
-  //   File bitmapFile = SD.open(fileName, FILE_READ);
-  //   if (bitmapFile) {
-  //     displayBitmap(bitmapFile);
-  //     bitmapFile.close();
-  //     return true;
-  //   } else {
-  //     Serial.println("Failed to open bitmap file: " + fileName);
-  //   }
-  // } else {
-  //   Serial.println("Bitmap file not found: " + fileName);
+  if (SD.exists(fileName)) {
+    File bitmapFile = SD.open(fileName, FILE_READ);
+    if (bitmapFile) {
+      displayBitmap(bitmapFile);
+      bitmapFile.close();
+      return true;
+    } else {
+      printf("Failed to open bitmap file: %s\n", fileName);
+    }
+  } else {
+    printf("Bitmap file not found: %s\n", fileName);
+  }
+
+  // if (fileName != nullptr) {
+  //   free(fileName);
   // }
 
   return false;
