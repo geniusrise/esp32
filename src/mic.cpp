@@ -10,7 +10,7 @@ I2SStream i2sStream;
 
 File input_audio_file;
 
-// EncodedAudioStream encoder(&file, new MP3EncoderLAME());
+EncodedAudioStream encoder(&input_audio_file, new MP3EncoderLAME());
 StreamCopy copier;
 
 MicManager::MicManager(int bckPin, int wsPin, int dataPin)
@@ -41,7 +41,7 @@ MicManager::startRecording(String fileName)
   copier.setCheckAvailableForWrite(false);
 
   i2sStream.begin(cfg);
-  copier.begin(input_audio_file, i2sStream);
+  copier.begin(encoder, i2sStream);
 }
 
 void
