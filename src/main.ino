@@ -66,8 +66,8 @@ setup()
   // digitalWrite(PIN_AUDIO_KIT_SD_CARD_CLK, 1);
 
   print_logo();
+  sd.begin();
   display.begin();
-  display.showEmotion(image_smiley.c_str());
 
   pinMode(TOUCH_PIN, INPUT);
 
@@ -89,7 +89,6 @@ setup()
 
     server.begin();
     ipAddress = wiFiManager.getIPAddress().toString();
-    sd.begin();
   }
 }
 

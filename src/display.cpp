@@ -1,8 +1,8 @@
 #include "display.h"
 
 // Assuming dimensions for simplicity
-#define BITMAP_WIDTH 128
-#define BITMAP_HEIGHT 128
+#define BITMAP_WIDTH TFT_WIDTH
+#define BITMAP_HEIGHT TFT_HEIGHT
 
 Display::Display()
 {
@@ -14,14 +14,18 @@ Display::begin()
 {
   tft.init();
   tft.setRotation(2);
-  tft.fillScreen(TFT_WHITE); // Start with a white screen
+  tft.fillScreen(TFT_OLIVE); // Start with a white screen
 }
 
 bool
 Display::showEmotion(const char* emotion)
 {
-  char* fileName = (char*)malloc((strlen(emotion) + 7 + 1) * sizeof(char));
-  sprintf(fileName, "/%s.svg.bmp", emotion);
+  char fileName[100];
+  snprintf(fileName, sizeof(fileName), "/sd/emojis/%s.bmp", emotion);
+
+  File myFile = SD.open("/lol.txt", FILE_WRITE);
+  myFile.println("testing 1, 2, 3.");
+  myFile.close();
 
   if (SD.exists(fileName)) {
     File bitmapFile = SD.open(fileName, FILE_READ);
@@ -56,10 +60,10 @@ Display::displayBitmap(File& bitmapFile)
 
   // Prepare the TFT display
   tft.startWrite();
-  tft.setAddrWindow(0, 0, width, height);
+  tft.setAddrWindow(0, 0, width - 1, height - 1);
 
   // Read and display the bitmap pixels
-  uint8_t buffer[BITMAP_WIDTH * 2]; // Adjust buffer size based on bitmap width
+  uint8_t buffer[TFT_WIDTH]; // Adjust buffer size based on bitmap width
   uint16_t color;
   uint32_t pixelCount = width * height;
 
