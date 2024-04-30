@@ -18,10 +18,13 @@
 #define PIN_MIC_WS GPIO_NUM_34
 #define PIN_MIC_DATA GPIO_NUM_16
 
-#define PIN_AUDIO_KIT_SD_CARD_CS GPIO_NUM_18
-#define PIN_AUDIO_KIT_SD_CARD_MOSI GPIO_NUM_37
-#define PIN_AUDIO_KIT_SD_CARD_CLK GPIO_NUM_36
-#define PIN_AUDIO_KIT_SD_CARD_MISO GPIO_NUM_35
+#define PIN_SPEAKER_LEFT_OUT 1
+#define PIN_SPEAKER_RIGHT_OUT 2
+
+#define PIN_SD_CARD_CS GPIO_NUM_18
+#define PIN_SD_CARD_MOSI GPIO_NUM_37
+#define PIN_SD_CARD_CLK GPIO_NUM_36
+#define PIN_SD_CARD_MISO GPIO_NUM_35
 
 // Configuration
 ConfigManager config = ConfigManager();
@@ -34,10 +37,8 @@ ServerManager server = ServerManager(config);
 WiFiManager wiFiManager = WiFiManager(config, server);
 
 // Peripherals
-SDCard sd = SDCard(PIN_AUDIO_KIT_SD_CARD_CS,
-                   PIN_AUDIO_KIT_SD_CARD_MISO,
-                   PIN_AUDIO_KIT_SD_CARD_MOSI,
-                   PIN_AUDIO_KIT_SD_CARD_CLK);
+SDCard sd =
+  SDCard(PIN_SD_CARD_CS, PIN_SD_CARD_MISO, PIN_SD_CARD_MOSI, PIN_SD_CARD_CLK);
 
 Display display = Display();
 MicManager mic = MicManager(PIN_MIC_BCK, PIN_MIC_WS, PIN_MIC_DATA);
@@ -55,15 +56,15 @@ setup()
 {
   delay(100);
 
-  // gpio_set_direction(PIN_AUDIO_KIT_SD_CARD_CS, GPIO_MODE_OUTPUT);
-  // gpio_set_direction(PIN_AUDIO_KIT_SD_CARD_MISO, GPIO_MODE_OUTPUT);
-  // gpio_set_direction(PIN_AUDIO_KIT_SD_CARD_MOSI, GPIO_MODE_OUTPUT);
-  // gpio_set_direction(PIN_AUDIO_KIT_SD_CARD_CLK, GPIO_MODE_OUTPUT);
+  // gpio_set_direction(PIN_SD_CARD_CS, GPIO_MODE_OUTPUT);
+  // gpio_set_direction(PIN_SD_CARD_MISO, GPIO_MODE_OUTPUT);
+  // gpio_set_direction(PIN_SD_CARD_MOSI, GPIO_MODE_OUTPUT);
+  // gpio_set_direction(PIN_SD_CARD_CLK, GPIO_MODE_OUTPUT);
 
-  // digitalWrite(PIN_AUDIO_KIT_SD_CARD_CS, 1);
-  // digitalWrite(PIN_AUDIO_KIT_SD_CARD_MISO, 1);
-  // digitalWrite(PIN_AUDIO_KIT_SD_CARD_MOSI, 1);
-  // digitalWrite(PIN_AUDIO_KIT_SD_CARD_CLK, 1);
+  // digitalWrite(PIN_SD_CARD_CS, 1);
+  // digitalWrite(PIN_SD_CARD_MISO, 1);
+  // digitalWrite(PIN_SD_CARD_MOSI, 1);
+  // digitalWrite(PIN_SD_CARD_CLK, 1);
 
   print_logo();
   sd.begin();

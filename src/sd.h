@@ -18,15 +18,15 @@ public:
 
   void begin()
   {
-    File root = SD.open("/");
     sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI, sd_CS);
+    delay(100);
 
     if (!SD.begin(sd_CS, sd_spi)) {
       Serial.println("\n\nSD card initialization failed!\n\n");
       return;
     }
     printf("SD Card mounted, directories:\n");
-    printDirectory(root, 0);
+    // printDirectory(SD.open("/"), 0);
   }
 
   void printDirectory(File dir, int numTabs)

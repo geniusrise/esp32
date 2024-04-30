@@ -21,7 +21,7 @@ bool
 Display::showEmotion(const char* emotion)
 {
   char fileName[100];
-  snprintf(fileName, sizeof(fileName), "/sd/emojis/%s.bmp", emotion);
+  snprintf(fileName, sizeof(fileName), "/emojis/%s.bmp", emotion);
 
   File myFile = SD.open("/lol.txt", FILE_WRITE);
   myFile.println("testing 1, 2, 3.");
