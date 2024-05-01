@@ -46,6 +46,9 @@ Display::showEmotion(const char* emotion)
 void
 Display::displayBitmap(File& bitmapFile)
 {
+
+  tft.fillScreen(TFT_BLACK);
+
   // Read the bitmap file header (first 14 bytes)
   char fileHeader[14];
   bitmapFile.read((uint8_t*)fileHeader, 14);
