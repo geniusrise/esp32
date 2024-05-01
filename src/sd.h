@@ -18,6 +18,11 @@ public:
 
   void begin()
   {
+
+    // needed for MOSI pullup, read
+    // https://github.com/espressif/arduino-esp32/issues/524
+    pinMode(sd_MISO, INPUT_PULLUP);
+
     sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI);
     delay(100);
 

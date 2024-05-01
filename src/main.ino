@@ -26,6 +26,8 @@
 #define PIN_SD_CARD_CLK GPIO_NUM_36
 #define PIN_SD_CARD_MISO GPIO_NUM_35
 
+#define INITIAL_DELAY 300
+
 // Configuration
 ConfigManager config = ConfigManager();
 
@@ -42,6 +44,7 @@ SDCard sd =
 
 Display display = Display();
 MicManager mic = MicManager(PIN_MIC_BCK, PIN_MIC_WS, PIN_MIC_DATA);
+Speaker speaker = Speaker(PIN_SPEAKER_LEFT_OUT, PIN_SPEAKER_RIGHT_OUT);
 
 bool IN_CONFIG_MODE = false;
 String ipAddress;
@@ -54,16 +57,20 @@ String current_filename;
 void
 setup()
 {
-  delay(6000);
   Serial.begin(115200);
-
-  // needed for MOSI pullup, read
-  // https://github.com/espressif/arduino-esp32/issues/524
-  pinMode(PIN_SD_CARD_MISO, INPUT_PULLUP);
+  delay(INITIAL_DELAY);
 
   print_logo();
+  delay(INITIAL_DELAY);
+
   sd.begin();
+  delay(INITIAL_DELAY);
+
   display.begin();
+  delay(INITIAL_DELAY);
+
+  speaker.begin();
+  delay(INITIAL_DELAY);
 
   pinMode(TOUCH_PIN, INPUT);
 
@@ -86,6 +93,8 @@ setup()
     server.begin();
     ipAddress = wiFiManager.getIPAddress().toString();
   }
+
+  delay(INITIAL_DELAY);
 }
 
 void
@@ -99,6 +108,7 @@ setup_loop()
     "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
 
   delay(1000);
+  display.showEmotion(image_face_with_raised_eyebrow.c_str());
 }
 
 void
@@ -152,9 +162,9 @@ normal_loop()
 void
 loop()
 {
-  if (IN_CONFIG_MODE) {
-    setup_loop();
-  } else {
-    normal_loop();
-  }
+  // if (IN_CONFIG_MODE) {
+  //   setup_loop();
+  // } else {
+  //   normal_loop();
+  // }
 }

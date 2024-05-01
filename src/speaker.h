@@ -8,12 +8,14 @@
 class Speaker
 {
 public:
-  Speaker(int sdCSPin, int sdMISOPin, int sdMOSIPin, int sdCLKPin);
+  Speaker(int left_channel, int right_channel);
+
+  void begin();
 
   void play(String fileName);
 
 private:
-  int sd_CS, sd_MISO, sd_MOSI, sd_CLK;
+  int left, right;
   SPIClass sd_spi;
   File file;
 };
