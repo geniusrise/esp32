@@ -52,6 +52,8 @@ String ipAddress;
 int touchPinPressedCycles = 0;
 String current_filename;
 
+String current_emotion;
+
 #define OPENAI_KEY "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"
 
 void
@@ -113,7 +115,11 @@ setup_loop()
     "------ ------ ------ ------ ------ ------ ------ ------ ------\n");
 
   delay(1000);
-  display.showEmotion(image_face_with_raised_eyebrow.c_str());
+
+  if (current_emotion != image_face_with_raised_eyebrow) {
+    display.showEmotion(image_face_with_raised_eyebrow.c_str());
+    current_emotion = image_face_with_raised_eyebrow;
+  }
 }
 
 void
@@ -124,7 +130,11 @@ normal_loop()
     touchPinPressedCycles += 1;
     if (touchPinPressedCycles == MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
 
-      display.showEmotion(image_cowboy_hat_face.c_str());
+      if (current_emotion != image_cowboy_hat_face) {
+        display.showEmotion(image_cowboy_hat_face.c_str());
+        current_emotion = image_cowboy_hat_face;
+      }
+
       Serial.println("Start: Listening to user via mic\n");
 
       // Prepare filename
@@ -143,7 +153,10 @@ normal_loop()
       touchPinPressedCycles = 0;
 
       Serial.println("Stop: Listening to user via mic\n");
-      display.showEmotion(image_thinking_face.c_str());
+      if (current_emotion != image_thinking_face) {
+        display.showEmotion(image_thinking_face.c_str());
+        current_emotion = image_thinking_face;
+      }
       mic.stopRecording();
 
       // call speech to text API
@@ -157,7 +170,10 @@ normal_loop()
     } else {
       // Otherwise, show the happy face
       Serial.println(".");
-      display.showEmotion(image_zipper_mouth_face.c_str());
+      if (current_emotion != image_zipper_mouth_face) {
+        display.showEmotion(image_zipper_mouth_face.c_str());
+        current_emotion = image_zipper_mouth_face;
+      }
     }
   }
 
