@@ -13,7 +13,7 @@ void
 Display::begin()
 {
   tft.init();
-  tft.setRotation(0);
+  tft.setRotation(2);
   tft.fillScreen(TFT_OLIVE); // Start with a white screen
 }
 
@@ -103,6 +103,12 @@ Display::displayBitmap(File& bitmapFile)
         uint8_t g = rowData[x * 3 + 1];
         uint8_t r = rowData[x * 3 + 2];
         uint16_t color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+        tft.drawPixel(x, y, color);
+      }
+    } else if (bitsPerPixel == 16) {
+      // Handle 16-bit RGB bitmap
+      for (uint32_t x = 0; x < width; x++) {
+        uint16_t color = *((uint16_t*)&rowData[x * 2]);
         tft.drawPixel(x, y, color);
       }
     } else {

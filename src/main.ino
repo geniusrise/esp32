@@ -170,9 +170,9 @@ normal_loop()
     } else {
       // Otherwise, show the happy face
       Serial.println(".");
-      if (current_emotion != image_zipper_mouth_face) {
-        display.showEmotion(image_zipper_mouth_face.c_str());
-        current_emotion = image_zipper_mouth_face;
+      if (current_emotion != image_robot) {
+        display.showEmotion(image_robot.c_str());
+        current_emotion = image_robot;
       }
     }
   }
