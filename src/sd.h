@@ -31,10 +31,6 @@ public:
       return;
     }
     Serial.println("SD Card mounted, directories:\n");
-
-    File myFile = SD.open("/lol.txt", FILE_WRITE);
-    myFile.println("testing 1, 2, 3.");
-    myFile.close();
   }
 
   void printDirectory(File dir, int numTabs)
