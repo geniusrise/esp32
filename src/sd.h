@@ -18,15 +18,18 @@ public:
 
   void begin()
   {
-    sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI, sd_CS);
+    sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI);
     delay(100);
 
     if (!SD.begin(sd_CS, sd_spi)) {
       Serial.println("\n\nSD card initialization failed!\n\n");
       return;
     }
-    printf("SD Card mounted, directories:\n");
-    // printDirectory(SD.open("/"), 0);
+    Serial.println("SD Card mounted, directories:\n");
+
+    File myFile = SD.open("/lol.txt", FILE_WRITE);
+    myFile.println("testing 1, 2, 3.");
+    myFile.close();
   }
 
   void printDirectory(File dir, int numTabs)

@@ -23,10 +23,6 @@ Display::showEmotion(const char* emotion)
   char fileName[100];
   snprintf(fileName, sizeof(fileName), "/emojis/%s.bmp", emotion);
 
-  File myFile = SD.open("/lol.txt", FILE_WRITE);
-  myFile.println("testing 1, 2, 3.");
-  myFile.close();
-
   if (SD.exists(fileName)) {
     File bitmapFile = SD.open(fileName, FILE_READ);
     if (bitmapFile) {

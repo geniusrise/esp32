@@ -18,8 +18,8 @@
 #define PIN_MIC_WS GPIO_NUM_34
 #define PIN_MIC_DATA GPIO_NUM_16
 
-#define PIN_SPEAKER_LEFT_OUT 1
-#define PIN_SPEAKER_RIGHT_OUT 2
+#define PIN_SPEAKER_LEFT_OUT GPIO_NUM_38
+#define PIN_SPEAKER_RIGHT_OUT GPIO_NUM_39
 
 #define PIN_SD_CARD_CS GPIO_NUM_18
 #define PIN_SD_CARD_MOSI GPIO_NUM_37
@@ -54,17 +54,12 @@ String current_filename;
 void
 setup()
 {
-  delay(100);
+  delay(6000);
+  Serial.begin(115200);
 
-  // gpio_set_direction(PIN_SD_CARD_CS, GPIO_MODE_OUTPUT);
-  // gpio_set_direction(PIN_SD_CARD_MISO, GPIO_MODE_OUTPUT);
-  // gpio_set_direction(PIN_SD_CARD_MOSI, GPIO_MODE_OUTPUT);
-  // gpio_set_direction(PIN_SD_CARD_CLK, GPIO_MODE_OUTPUT);
-
-  // digitalWrite(PIN_SD_CARD_CS, 1);
-  // digitalWrite(PIN_SD_CARD_MISO, 1);
-  // digitalWrite(PIN_SD_CARD_MOSI, 1);
-  // digitalWrite(PIN_SD_CARD_CLK, 1);
+  // needed for MOSI pullup, read
+  // https://github.com/espressif/arduino-esp32/issues/524
+  pinMode(PIN_SD_CARD_MISO, INPUT_PULLUP);
 
   print_logo();
   sd.begin();
@@ -115,7 +110,7 @@ normal_loop()
     if (touchPinPressedCycles == MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
 
       display.showEmotion(image_cowboy_hat_face.c_str());
-      printf("Start: Listening to user via mic\n");
+      Serial.println("Start: Listening to user via mic\n");
 
       // Prepare filename
       String now = timeClient.getFormattedTime();
@@ -132,7 +127,7 @@ normal_loop()
     if (touchPinPressedCycles > 0) {
       touchPinPressedCycles = 0;
 
-      printf("Stop: Listening to user via mic\n");
+      Serial.println("Stop: Listening to user via mic\n");
       display.showEmotion(image_thinking_face.c_str());
       mic.stopRecording();
 
@@ -146,7 +141,7 @@ normal_loop()
       // finally call text to speech API
     } else {
       // Otherwise, show the happy face
-      printf(".");
+      Serial.println(".");
       display.showEmotion(image_smiley.c_str());
     }
   }
@@ -157,9 +152,9 @@ normal_loop()
 void
 loop()
 {
-  if (IN_CONFIG_MODE) {
-    setup_loop();
-  } else {
-    normal_loop();
-  }
+  // if (IN_CONFIG_MODE) {
+  //   setup_loop();
+  // } else {
+  //   normal_loop();
+  // }
 }
