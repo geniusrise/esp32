@@ -63,17 +63,21 @@ setup()
   print_logo();
   delay(INITIAL_DELAY);
 
+  Serial.println("----------- Init SD Card -----------");
   sd.begin();
   delay(INITIAL_DELAY);
 
+  Serial.println("----------- Init display -----------");
   display.begin();
   delay(INITIAL_DELAY);
 
+  Serial.println("----------- Init Speaker -----------");
   speaker.begin();
   delay(INITIAL_DELAY);
 
   pinMode(TOUCH_PIN, INPUT);
 
+  Serial.println("----------- Init Wifi -----------");
   String ssid = config.getWiFiSSID();
   String password = config.getWiFiPassword();
   if (ssid == "") {
@@ -94,6 +98,7 @@ setup()
     ipAddress = wiFiManager.getIPAddress().toString();
   }
 
+  Serial.println("----------- Init Done, device is up -----------");
   delay(INITIAL_DELAY);
 }
 
@@ -162,9 +167,9 @@ normal_loop()
 void
 loop()
 {
-  // if (IN_CONFIG_MODE) {
-  //   setup_loop();
-  // } else {
-  //   normal_loop();
-  // }
+  if (IN_CONFIG_MODE) {
+    setup_loop();
+  } else {
+    normal_loop();
+  }
 }

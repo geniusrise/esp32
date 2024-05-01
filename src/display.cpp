@@ -13,7 +13,7 @@ void
 Display::begin()
 {
   tft.init();
-  // tft.setRotation(2);
+  tft.setRotation(2);
   tft.fillScreen(TFT_OLIVE); // Start with a white screen
 }
 
@@ -70,31 +70,47 @@ Display::displayBitmap(File& bitmapFile)
   // Skip any remaining header bytes
   bitmapFile.seek(headerSize);
 
-  // Prepare the TFT display
-  tft.startWrite();
-  tft.setAddrWindow(0, 0, width - 1, height - 1);
+  printf("Rendering image dim: %dx%d %d bit\n", width, height, bitsPerPixel);
 
-  // Read and display the bitmap pixels
-  uint32_t buffer[TFT_WIDTH];
-  uint32_t pixelCount = width * height;
+  // Move the file pointer to the start of the bitmap data
+  bitmapFile.seek(dataOffset);
 
-  if (bitsPerPixel == 32) {
-    // 32-bit RGBA bitmap
-    while (pixelCount--) {
-      bitmapFile.read((uint8_t*)&buffer[0], 4);
-      uint32_t color = buffer[0];
-      uint16_t convertedColor = ((color & 0xF80000) >> 8) |
-                                ((color & 0x00FC00) >> 5) |
-                                ((color & 0x0000F8) >> 3);
-      tft.pushColor(convertedColor);
-    }
-  } else {
-    // 16-bit RGB565 bitmap
-    while (pixelCount--) {
-      bitmapFile.read((uint8_t*)&buffer[0], 2);
-      tft.pushColor(buffer[0]);
+  // Calculate the row size and padding
+  uint32_t rowSize = ((width * bitsPerPixel + 31) / 32) * 4;
+  uint32_t padding = rowSize - width * bitsPerPixel / 8;
+
+  // Allocate memory for one row of bitmap data
+  uint8_t* rowData = new uint8_t[rowSize];
+
+  // Display the bitmap on the TFT
+  for (int32_t y = height - 1; y >= 0; y--) {
+    bitmapFile.read(rowData, rowSize);
+
+    if (bitsPerPixel == 32) {
+      // Handle 32-bit RGBA bitmap
+      for (uint32_t x = 0; x < width; x++) {
+        uint8_t b = rowData[x * 4];
+        uint8_t g = rowData[x * 4 + 1];
+        uint8_t r = rowData[x * 4 + 2];
+        uint8_t a = rowData[x * 4 + 3]; // Alpha channel (unused in this case)
+        uint16_t color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+        tft.drawPixel(x, y, color);
+      }
+    } else if (bitsPerPixel == 24) {
+      // Handle 24-bit RGB bitmap
+      for (uint32_t x = 0; x < width; x++) {
+        uint8_t b = rowData[x * 3];
+        uint8_t g = rowData[x * 3 + 1];
+        uint8_t r = rowData[x * 3 + 2];
+        uint16_t color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+        tft.drawPixel(x, y, color);
+      }
+    } else {
+      printf("Unsupported bits per pixel: %d\n", bitsPerPixel);
+      break;
     }
   }
 
-  tft.endWrite();
+  // Free the memory allocated for row data
+  delete[] rowData;
 }
