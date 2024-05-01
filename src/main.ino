@@ -142,7 +142,7 @@ normal_loop()
     } else {
       // Otherwise, show the happy face
       Serial.println(".");
-      display.showEmotion(image_smiley.c_str());
+      display.showEmotion(image_zipper_mouth_face.c_str());
     }
   }
 
@@ -152,9 +152,9 @@ normal_loop()
 void
 loop()
 {
-  // if (IN_CONFIG_MODE) {
-  //   setup_loop();
-  // } else {
-  //   normal_loop();
-  // }
+  if (IN_CONFIG_MODE) {
+    setup_loop();
+  } else {
+    normal_loop();
+  }
 }

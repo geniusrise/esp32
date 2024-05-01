@@ -13,7 +13,7 @@ void
 Display::begin()
 {
   tft.init();
-  tft.setRotation(2);
+  // tft.setRotation(2);
   tft.fillScreen(TFT_OLIVE); // Start with a white screen
 }
 
@@ -59,14 +59,16 @@ Display::displayBitmap(File& bitmapFile)
   tft.setAddrWindow(0, 0, width - 1, height - 1);
 
   // Read and display the bitmap pixels
-  uint8_t buffer[TFT_WIDTH]; // Adjust buffer size based on bitmap width
-  uint16_t color;
+  uint32_t buffer[TFT_WIDTH];
   uint32_t pixelCount = width * height;
 
   while (pixelCount--) {
-    bitmapFile.read(&buffer[0], 2);
-    color = ((buffer[1] << 8) | buffer[0]);
-    tft.pushColor(color);
+    bitmapFile.read((uint8_t*)&buffer[0], 4);
+    uint32_t color = buffer[0];
+    uint16_t convertedColor = ((color & 0xF80000) >> 8) |
+                              ((color & 0x00FC00) >> 5) |
+                              ((color & 0x0000F8) >> 3);
+    tft.pushColor(convertedColor);
   }
 
   tft.endWrite();
