@@ -2,7 +2,7 @@
 
 #define SAMPLE_RATE 16000
 #define CHANNELS 1
-#define BITS_PER_SAMPLE 32
+#define BITS_PER_SAMPLE 16
 
 // Source: mic over i2s
 I2SConfig cfg;
@@ -46,6 +46,9 @@ MicManager::startRecording(String fileName)
   input_audio_file.seek(0);
 
   copyToSD.setCheckAvailableForWrite(false);
+
+  AudioInfo info(SAMPLE_RATE, CHANNELS, BITS_PER_SAMPLE);
+  wav.setAudioInfo(info);
 
   wav.begin();
   i2sStream.begin(cfg);
