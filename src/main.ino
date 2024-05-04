@@ -27,6 +27,8 @@
 
 #define INITIAL_DELAY 300
 #define MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND 2
+#define AUDIO_BASE_PATH "/"
+#define OPENAI_KEY "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"
 
 // Configuration
 ConfigManager config = ConfigManager();
@@ -53,8 +55,6 @@ int touchPinPressedCycles = 0;
 String current_filename;
 
 String current_emotion;
-
-#define OPENAI_KEY "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"
 
 void
 setup()
@@ -162,14 +162,15 @@ setup_loop()
 void
 normal_loop()
 {
+  // if button is pressed...
   if (digitalRead(TOUCH_PIN) == HIGH) {
-    // If GPIO17 is HIGH, show the surprised face
+    // button has been pressed for a sufficient time, show the surprised face
     touchPinPressedCycles += 1;
     if (touchPinPressedCycles == MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
 
-      if (current_emotion != image_cowboy_hat_face) {
-        display.showEmotion(image_cowboy_hat_face.c_str());
-        current_emotion = image_cowboy_hat_face;
+      if (current_emotion != image_face_with_open_mouth) {
+        display.showEmotion(image_face_with_open_mouth.c_str());
+        current_emotion = image_face_with_open_mouth;
       }
 
       Serial.println("Start: Listening to user via mic\n");
@@ -179,13 +180,18 @@ normal_loop()
       now.replace(":", "-");
       int randomPart = random(1000, 9999);
 
-      current_filename = "/" + now + "--" + randomPart + ".mp3";
+      current_filename = AUDIO_BASE_PATH + now + "--" + randomPart + ".wav";
       mic.startRecording(current_filename);
+
+      // button is still pressed after the initial lag, continue recording
     } else if (touchPinPressedCycles > MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND) {
+      Serial.println("Recording...\n");
       mic.record();
     }
 
+    // button is not pressed
   } else {
+    // button released recently
     if (touchPinPressedCycles > 0) {
       touchPinPressedCycles = 0;
 
@@ -197,19 +203,21 @@ normal_loop()
       mic.stopRecording();
 
       // call speech to text API
-      OpenAI openai(OPENAI_KEY);
-      String response =
-        openai.createTranscription(current_filename.c_str(), "whisper-1");
+      // OpenAI openai(OPENAI_KEY);
+      // String response =
+      //   openai.createTranscription(current_filename.c_str(), "whisper-1");
 
       // then call the LLM
 
       // finally call text to speech API
+
+      // button has not been pressed for some time
     } else {
       // Otherwise, show the happy face
-      Serial.println(".");
-      if (current_emotion != image_robot) {
-        display.showEmotion(image_robot.c_str());
-        current_emotion = image_robot;
+      color_printf(".");
+      if (current_emotion != image_sleeping) {
+        display.showEmotion(image_sleeping.c_str());
+        current_emotion = image_sleeping;
       }
     }
   }

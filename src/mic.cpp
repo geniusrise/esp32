@@ -10,8 +10,15 @@ I2SStream i2sStream;
 
 File input_audio_file;
 
-EncodedAudioStream encoder(&input_audio_file, new MP3EncoderLAME());
-StreamCopy copier;
+// Stick to wav for wider applicability
+// MP3EncoderLAME mp3;
+// WAVEncoder wav;
+// EncodedAudioStream encoder(&i2sStream, &wav);
+// StreamCopy copyToSD(input_audio_file, encoder);
+
+WAVEncoder wav;
+EncodedAudioStream encoder(&input_audio_file, &wav);
+StreamCopy copyToSD(encoder, i2sStream);
 
 MicManager::MicManager(int bckPin, int wsPin, int dataPin)
   : mic_BCK(bckPin)
@@ -38,22 +45,24 @@ MicManager::startRecording(String fileName)
   input_audio_file = SD.open(fileName, FILE_WRITE);
   input_audio_file.seek(0);
 
-  copier.setCheckAvailableForWrite(false);
+  copyToSD.setCheckAvailableForWrite(false);
 
+  wav.begin();
   i2sStream.begin(cfg);
-  copier.begin(encoder, i2sStream);
+  copyToSD.begin();
 }
 
 void
 MicManager::record()
 {
-  copier.copy();
+  copyToSD.copy();
 }
 
 void
 MicManager::stopRecording()
 {
-  copier.end();
+  wav.end();
+  copyToSD.end();
   i2sStream.end();
   input_audio_file.close();
 }
