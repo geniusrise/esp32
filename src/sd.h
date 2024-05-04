@@ -19,18 +19,19 @@ public:
   void begin()
   {
 
-    // needed for MOSI pullup, read
+    // need to set MISO to pullup, read
     // https://github.com/espressif/arduino-esp32/issues/524
     pinMode(sd_MISO, INPUT_PULLUP);
+    digitalWrite(sd_CS, HIGH);
 
-    sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI);
-    delay(100);
+    sd_spi.begin(sd_CLK, sd_MISO, sd_MOSI, sd_CS);
+    sd_spi.setDataMode(SPI_MODE0);
 
     if (!SD.begin(sd_CS, sd_spi)) {
-      Serial.println("\n\nSD card initialization failed!\n\n");
+      Serial.println("\nFailed to mount SD Card.\n\n");
       return;
     }
-    Serial.println("SD Card mounted, directories:\n");
+    Serial.println("SD Card mounted, continuing.\n");
   }
 
   void printDirectory(File dir, int numTabs)

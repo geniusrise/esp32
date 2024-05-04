@@ -12,21 +12,21 @@
 #include <NTPClient.h>
 
 #define TOUCH_PIN GPIO_NUM_17
-#define MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND 2
 
-#define PIN_MIC_BCK GPIO_NUM_33
-#define PIN_MIC_WS GPIO_NUM_34
+#define PIN_MIC_BCK GPIO_NUM_48
+#define PIN_MIC_WS GPIO_NUM_18
 #define PIN_MIC_DATA GPIO_NUM_16
 
 #define PIN_SPEAKER_LEFT_OUT GPIO_NUM_38
 #define PIN_SPEAKER_RIGHT_OUT GPIO_NUM_39
 
-#define PIN_SD_CARD_CS GPIO_NUM_18
-#define PIN_SD_CARD_MOSI GPIO_NUM_37
+#define PIN_SD_CARD_CS GPIO_NUM_34
+#define PIN_SD_CARD_MOSI GPIO_NUM_35
 #define PIN_SD_CARD_CLK GPIO_NUM_36
-#define PIN_SD_CARD_MISO GPIO_NUM_35
+#define PIN_SD_CARD_MISO GPIO_NUM_37
 
 #define INITIAL_DELAY 300
+#define MAX_TOUCH_BUTTON_CYCLES_TO_RESPOND 2
 
 // Configuration
 ConfigManager config = ConfigManager();
@@ -59,6 +59,43 @@ String current_emotion;
 void
 setup()
 {
+
+  // Debug SD card connections
+  // int ctr = 0;
+  // while (1) {
+  //   ctr++;
+
+  //   pinMode(TOUCH_PIN, OUTPUT);
+
+  //   pinMode(PIN_MIC_BCK, OUTPUT);
+  //   pinMode(PIN_MIC_WS, OUTPUT);
+  //   pinMode(PIN_MIC_DATA, OUTPUT);
+
+  //   pinMode(PIN_SPEAKER_LEFT_OUT, OUTPUT);
+  //   pinMode(PIN_SPEAKER_RIGHT_OUT, OUTPUT);
+
+  //   pinMode(PIN_SD_CARD_CS, OUTPUT);
+  //   pinMode(PIN_SD_CARD_MOSI, OUTPUT);
+  //   pinMode(PIN_SD_CARD_CLK, OUTPUT);
+  //   pinMode(PIN_SD_CARD_MISO, OUTPUT);
+
+  //   digitalWrite(TOUCH_PIN, ctr % 2);
+
+  //   digitalWrite(PIN_MIC_BCK, ctr % 2);
+  //   digitalWrite(PIN_MIC_WS, ctr % 2);
+  //   digitalWrite(PIN_MIC_DATA, ctr % 2);
+
+  //   digitalWrite(PIN_SPEAKER_LEFT_OUT, ctr % 2);
+  //   digitalWrite(PIN_SPEAKER_RIGHT_OUT, ctr % 2);
+
+  //   digitalWrite(PIN_SD_CARD_CS, ctr % 2);
+  //   digitalWrite(PIN_SD_CARD_MOSI, ctr % 2);
+  //   digitalWrite(PIN_SD_CARD_CLK, ctr % 2);
+  //   digitalWrite(PIN_SD_CARD_MISO, ctr % 2);
+
+  //   delay(2000);
+  // }
+
   Serial.begin(115200);
   delay(INITIAL_DELAY);
 
